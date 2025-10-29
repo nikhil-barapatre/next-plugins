@@ -2,9 +2,9 @@
 import { Product as PrismaProduct } from '@prisma/client'
 
 // Client-safe product type (Decimal -> string conversion)
-export type Product = Omit<PrismaProduct, 'price' | 'discountedPrice'> & {
+export type Product = Omit<PrismaProduct, 'price' | 'discounted_price'> & {
   price: string
-  discountedPrice: string | null
+  discounted_price: string | null
 }
 
 // API response types
@@ -12,7 +12,7 @@ export interface ApiResponse<T> {
   success: boolean
   data: T
   error?: string
-  meta?: Record<string, any>
+  meta?: Record<string, unknown>
 }
 
 // Pagination types
@@ -37,20 +37,6 @@ export interface GetProductsParams {
 }
 
 // Form data types
-export interface ProductFormData {
-  name: string
-  description?: string
-  sku?: string
-  barcode?: string
-  price: string
-  discountedPrice?: string
-  stock: string
-  category?: string
-  subCategory?: string
-  status: 'DRAFT' | 'ACTIVE' | 'ARCHIVED'
-  inStock: boolean
-  chargeTax: boolean
-}
 
 // Component props
 export interface ProductListProps {

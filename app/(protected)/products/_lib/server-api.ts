@@ -1,13 +1,12 @@
-// app/(protected)/products/_lib/server-api.ts
-import { prisma } from '@/lib/db'
-import type { GetProductsParams, Product } from '../_types'
+import { prisma } from '@/lib/db';
+import type { Prisma } from '@prisma/client';
+import type { GetProductsParams } from '../_types'
 
+// Server-side API functions (for Route Handlers, Server Components, etc.)
 export async function getProducts(params: GetProductsParams = {}) {
-  const { page = 1, pageSize = 10, search = '', categories = [], statuses = [] } = params
+  const { page = 1, pageSize = 10, search = '' } = params
 
-  const skip = (page - 1) * pageSize
-  const where: any = {}
-
+  const where: Prisma.ProductWhereInput = {}
   if (search) {
     where.OR = [
       { name: { contains: search, mode: 'insensitive' } },
@@ -15,38 +14,45 @@ export async function getProducts(params: GetProductsParams = {}) {
     ]
   }
 
-  if (categories.length > 0) {
-    where.category = { in: categories }
-  }
-
-  if (statuses.length > 0) {
-    where.status = { in: statuses }
-  }
-
   const [total, products] = await Promise.all([
     prisma.product.count({ where }),
     prisma.product.findMany({
       where,
-      orderBy: { createdAt: 'desc' },
-      skip,
+      orderBy: { created_at: 'desc' },
+      skip: (page - 1) * pageSize,
       take: pageSize,
     }),
   ])
 
-  // Convert Decimal to string for client components
   const serializedProducts = products.map((product) => ({
     ...product,
     price: product.price.toString(),
-    discountedPrice: product.discountedPrice?.toString() || null,
+    discounted_price: product.discounted_price?.toString() || null,
   }))
 
   return {
     products: serializedProducts,
     pagination: {
-      total,
       page,
       pageSize,
+      total,
       totalPages: Math.ceil(total / pageSize),
     },
+  }
+}
+
+export async function getProductById(productId: string) {
+  const product = await prisma.product.findUnique({
+    where: { id: productId },
+  })
+
+  if (!product) {
+    return null
+  }
+
+  return {
+    ...product,
+    price: product.price.toString(),
+    discounted_price: product.discounted_price?.toString() || null,
   }
 }
