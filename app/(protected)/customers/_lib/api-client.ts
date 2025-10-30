@@ -76,15 +76,20 @@ export async function deleteCustomer(customerId: string): Promise<void> {
     method: 'DELETE',
   })
 
-  if (response.status === 204) {
-    return
+  if (!response.ok) {
+    let errorMessage = 'Failed to delete customer';
+    try {
+      const errorResult = await response.json();
+      if (errorResult.error) {
+        errorMessage = errorResult.error;
+      }
+    } catch (e) {
+      // If parsing JSON fails (e.g., no body or invalid JSON), use generic message
+    }
+    throw new Error(errorMessage);
   }
 
-  const result: ApiResponse<void> = await response.json()
-
-  if (!result.success) {
-    throw new Error(result.error || 'Failed to delete customer')
-  }
+  return;
 }
 
 export type { Customer };

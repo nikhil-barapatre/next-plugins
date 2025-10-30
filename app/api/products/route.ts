@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Build filters...
-    const where: Prisma.ProductWhereInput = {}
+    const where: Prisma.ProductWhereInput = {}  
     if (search) {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
       }),
     ])
 
-    const serializedProducts = products.map((product: Prisma.Product) => ({
+    const serializedProducts = products.map((product) => ({
       ...product,
       price: product.price.toString(),
       discounted_price: product.discounted_price?.toString() || null,

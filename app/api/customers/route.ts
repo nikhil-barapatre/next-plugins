@@ -75,7 +75,7 @@ export async function DELETE(req: Request) {
       where: { id },
     });
 
-    return NextResponse.json({ success: true, data: null }, { status: 204 });
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("[CUSTOMERS_DELETE]", error);
     return NextResponse.json({ success: false, error: "Internal error" }, { status: 500 });

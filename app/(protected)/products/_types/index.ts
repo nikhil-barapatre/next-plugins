@@ -2,9 +2,10 @@
 import { Product as PrismaProduct } from '@prisma/client'
 
 // Client-safe product type (Decimal -> string conversion)
-export type Product = Omit<PrismaProduct, 'price' | 'discounted_price'> & {
+export type Product = Omit<PrismaProduct, 'price' | 'discounted_price' | 'status'> & {
   price: string
   discounted_price: string | null
+  status: 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | null
 }
 
 // API response types

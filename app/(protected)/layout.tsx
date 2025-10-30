@@ -1,0 +1,502 @@
+// "use client";
+
+// import { useState } from "react";
+// import Link from "next/link";
+// import { usePathname } from "next/navigation";
+// import {
+//   Sheet,
+//   SheetContent,
+//   SheetTrigger,
+// } from "@/components/ui/sheet";
+// import { Button } from "@/components/ui/button";
+// import {
+//   Home,
+//   Users,
+//   Package,
+//   Menu,
+// } from "lucide-react";
+// import { cn } from "@/lib/utils";
+
+// export default function ProtectedLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const [open, setOpen] = useState(false);
+//   const pathname = usePathname();
+
+//   const navItems = [
+//     { name: "Customers", href: "/customers", icon: Users },
+//     { name: "Products", href: "/products", icon: Package },
+//   ];
+
+//   return (
+//     <div className="flex min-h-screen bg-muted/30">
+//       {/* Sidebar for desktop */}
+//       <aside className="hidden md:flex md:w-64 flex-col border-r bg-background">
+//         <div className="flex items-center justify-between px-4 py-3 border-b">
+//           <h1 className="text-xl font-semibold">Dashboard</h1>
+//         </div>
+//         <nav className="flex-1 space-y-1 p-2">
+//           {navItems.map((item) => {
+//             const Icon = item.icon;
+//             return (
+//               <Link
+//                 key={item.href}
+//                 href={item.href}
+//                 className={cn(
+//                   "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+//                   pathname === item.href
+//                     ? "bg-accent text-accent-foreground"
+//                     : "text-muted-foreground"
+//                 )}
+//               >
+//                 <Icon className="w-5 h-5" />
+//                 {item.name}
+//               </Link>
+//             );
+//           })}
+//         </nav>
+//       </aside>
+
+//       {/* Mobile Navbar */}
+//       <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between bg-background border-b px-4 py-2">
+//         <Sheet open={open} onOpenChange={setOpen}>
+//           <SheetTrigger asChild>
+//             <Button variant="ghost" size="icon">
+//               <Menu className="w-5 h-5" />
+//             </Button>
+//           </SheetTrigger>
+//           <SheetContent side="left" className="p-0 w-64">
+//             <div className="border-b px-4 py-3">
+//               <h1 className="text-lg font-semibold">Dashboard</h1>
+//             </div>
+//             <nav className="space-y-1 p-2">
+//               {navItems.map((item) => {
+//                 const Icon = item.icon;
+//                 return (
+//                   <Link
+//                     key={item.href}
+//                     href={item.href}
+//                     onClick={() => setOpen(false)}
+//                     className={cn(
+//                       "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+//                       pathname === item.href
+//                         ? "bg-accent text-accent-foreground"
+//                         : "text-muted-foreground"
+//                     )}
+//                   >
+//                     <Icon className="w-5 h-5" />
+//                     {item.name}
+//                   </Link>
+//                 );
+//               })}
+//             </nav>
+//           </SheetContent>
+//         </Sheet>
+
+//         <h1 className="text-lg font-semibold">Dashboard</h1>
+//       </div>
+
+//       {/* Main Content */}
+//       <main className="flex-1 p-6 md:ml-64 mt-12 md:mt-0 overflow-y-auto">
+//         {children}
+//       </main>
+//     </div>
+//   );
+// }
+
+
+
+// "use client";
+
+// import { useState } from "react";
+// import Link from "next/link";
+// import { usePathname } from "next/navigation";
+// import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+// import { Button } from "@/components/ui/button";
+// import { Users, Package, Menu } from "lucide-react";
+// import { cn } from "@/lib/utils";
+
+// export default function ProtectedLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const pathname = usePathname();
+//   const [open, setOpen] = useState(false);
+
+//   const navItems = [
+//     { name: "Customers", href: "/customers", icon: Users },
+//     { name: "Products", href: "/products", icon: Package },
+//   ];
+
+//   return (
+//     <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
+//       {/* Sidebar (Desktop) */}
+//       <aside className="hidden md:flex md:flex-col w-64 border-r bg-card">
+//         <div className="flex items-center justify-between px-4 py-4 border-b">
+//           <h1 className="text-lg font-semibold">Next-Plugins</h1>
+//         </div>
+//         <nav className="flex-1 space-y-1 p-2">
+//           {navItems.map((item) => {
+//             const Icon = item.icon;
+//             const active = pathname === item.href;
+//             return (
+//               <Link
+//                 key={item.href}
+//                 href={item.href}
+//                 className={cn(
+//                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+//                   active
+//                     ? "bg-accent text-accent-foreground"
+//                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+//                 )}
+//               >
+//                 <Icon className="w-5 h-5" />
+//                 {item.name}
+//               </Link>
+//             );
+//           })}
+//         </nav>
+//       </aside>
+
+//       {/* Mobile Navbar + Drawer */}
+//       <div className="fixed top-0 left-0 right-0 z-40 flex items-center justify-between border-b bg-background px-4 py-2 md:hidden">
+//         <Sheet open={open} onOpenChange={setOpen}>
+//           <SheetTrigger asChild>
+//             <Button variant="ghost" size="icon">
+//               <Menu className="w-5 h-5" />
+//             </Button>
+//           </SheetTrigger>
+//           <SheetContent side="left" className="p-0 w-64">
+//             <div className="border-b px-4 py-4">
+//               <h1 className="text-lg font-semibold">Dashboard</h1>
+//             </div>
+//             <nav className="space-y-1 p-2">
+//               {navItems.map((item) => {
+//                 const Icon = item.icon;
+//                 const active = pathname === item.href;
+//                 return (
+//                   <Link
+//                     key={item.href}
+//                     href={item.href}
+//                     onClick={() => setOpen(false)}
+//                     className={cn(
+//                       "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+//                       active
+//                         ? "bg-accent text-accent-foreground"
+//                         : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+//                     )}
+//                   >
+//                     <Icon className="w-5 h-5" />
+//                     {item.name}
+//                   </Link>
+//                 );
+//               })}
+//             </nav>
+//           </SheetContent>
+//         </Sheet>
+//         <h1 className="text-lg font-semibold">Dashboard</h1>
+//       </div>
+
+//       {/* Main Content */}
+//       <main className="flex-1 overflow-y-auto p-6 pt-16 md:pt-6">
+//         {children}
+//       </main>
+//     </div>
+//   );
+// }
+
+
+// "use client";
+
+// import { useState } from "react";
+// import Link from "next/link";
+// import { usePathname } from "next/navigation";
+// import {
+//   Menu,
+//   Package,
+//   Users,
+//   LogOut,
+//   ChevronLeft,
+//   ChevronRight,
+// } from "lucide-react";
+// import { Button } from "@/components/ui/button";
+// import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+// import { cn } from "@/lib/utils";
+
+// export default function ProtectedLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   const pathname = usePathname();
+//   const [collapsed, setCollapsed] = useState(false);
+//   const [mobileOpen, setMobileOpen] = useState(false);
+
+//   const navItems = [
+//     { name: "Customers", href: "/customers", icon: Users },
+//     { name: "Products", href: "/products", icon: Package },
+//   ];
+
+//   return (
+//     <div className="flex min-h-screen bg-background text-foreground">
+//       {/* SIDEBAR - Desktop */}
+//       <aside
+//         className={cn(
+//           "hidden md:flex flex-col border-r bg-card transition-all duration-300 ease-in-out",
+//           collapsed ? "w-16" : "w-64"
+//         )}
+//       >
+//         {/* Header */}
+//         <div className="flex items-center justify-between h-14 px-3 border-b">
+//           {!collapsed && <h1 className="font-semibold text-lg">Dashboard</h1>}
+//           <Button
+//             variant="ghost"
+//             size="icon"
+//             onClick={() => setCollapsed(!collapsed)}
+//             aria-label="Toggle sidebar"
+//           >
+//             {collapsed ? (
+//               <ChevronRight className="h-5 w-5" />
+//             ) : (
+//               <ChevronLeft className="h-5 w-5" />
+//             )}
+//           </Button>
+//         </div>
+
+//         {/* Nav Links */}
+//         <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+//           {navItems.map((item) => {
+//             const Icon = item.icon;
+//             const active = pathname === item.href;
+//             return (
+//               <Link
+//                 key={item.href}
+//                 href={item.href}
+//                 className={cn(
+//                   "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+//                   active
+//                     ? "bg-accent text-accent-foreground"
+//                     : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+//                   collapsed ? "justify-center px-2" : "gap-3"
+//                 )}
+//               >
+//                 <Icon className="w-5 h-5 shrink-0" />
+//                 {!collapsed && <span>{item.name}</span>}
+//               </Link>
+//             );
+//           })}
+//         </nav>
+
+//         {/* Footer */}
+//         <div className={cn("border-t p-3", collapsed && "p-2 flex justify-center")}>
+//           <Button
+//             variant="ghost"
+//             className={cn(
+//               "w-full justify-start text-sm font-medium",
+//               collapsed && "justify-center"
+//             )}
+//           >
+//             <LogOut className="w-4 h-4 mr-2 shrink-0" />
+//             {!collapsed && "Logout"}
+//           </Button>
+//         </div>
+//       </aside>
+
+//       {/* MOBILE SIDEBAR */}
+//       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+//         <div className="absolute top-3 left-3 z-40 md:hidden">
+//           <SheetTrigger asChild>
+//             <Button variant="ghost" size="icon">
+//               <Menu className="w-5 h-5" />
+//             </Button>
+//           </SheetTrigger>
+//         </div>
+//         <SheetContent side="left" className="p-0 w-64">
+//           <aside className="flex flex-col h-full bg-card border-r">
+//             <div className="flex items-center justify-between h-14 px-4 border-b">
+//               <h1 className="font-semibold text-lg">Dashboard</h1>
+//             </div>
+//             <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+//               {navItems.map((item) => {
+//                 const Icon = item.icon;
+//                 const active = pathname === item.href;
+//                 return (
+//                   <Link
+//                     key={item.href}
+//                     href={item.href}
+//                     onClick={() => setMobileOpen(false)}
+//                     className={cn(
+//                       "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+//                       active
+//                         ? "bg-accent text-accent-foreground"
+//                         : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+//                     )}
+//                   >
+//                     <Icon className="w-5 h-5" />
+//                     {item.name}
+//                   </Link>
+//                 );
+//               })}
+//             </nav>
+//           </aside>
+//         </SheetContent>
+//       </Sheet>
+
+//       {/* MAIN CONTENT */}
+//       <main className="flex-1 overflow-y-auto">
+//         <div className="md:hidden h-12" /> {/* Space for mobile trigger */}
+//         <div className="p-6">{children}</div>
+//       </main>
+//     </div>
+//   );
+// }
+
+
+"use client";
+
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  Menu,
+  Package,
+  Users,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+export default function ProtectedLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navItems = [
+    { name: "Customers", href: "/customers", icon: Users },
+    { name: "Products", href: "/products", icon: Package },
+  ];
+
+  // Close mobile sidebar on resize above breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setMobileOpen(false);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return (
+    <div className="flex h-screen w-full bg-background text-foreground overflow-hidden">
+      {/* Sidebar */}
+      <div
+        className={cn(
+          "flex flex-col h-full border-r bg-card transition-all duration-300 ease-in-out",
+          collapsed ? "w-16" : "w-64",
+          mobileOpen
+            ? "translate-x-0"
+            : "-translate-x-full md:translate-x-0",
+          "md:relative absolute z-40"
+        )}
+      >
+        {/* Sidebar Header */}
+        <div className="flex items-center justify-between h-14 px-3 border-b">
+          {!collapsed && <h1 className="font-semibold text-lg">Dashboard</h1>}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              window.innerWidth < 768
+                ? setMobileOpen(!mobileOpen)
+                : setCollapsed(!collapsed)
+            }
+          >
+            {collapsed ? (
+              <ChevronRight className="h-5 w-5" />
+            ) : (
+              <ChevronLeft className="h-5 w-5" />
+            )}
+          </Button>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-2 space-y-1">
+          {navItems.map((item) => {
+            const Icon = item.icon;
+            const active = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className={cn(
+                  "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  active
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  collapsed ? "justify-center px-2" : "gap-3"
+                )}
+              >
+                <Icon className="w-5 h-5 shrink-0" />
+                {!collapsed && <span>{item.name}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div
+          className={cn(
+            "border-t p-3",
+            collapsed && "p-2 flex justify-center"
+          )}
+        >
+          <Button
+            variant="ghost"
+            className={cn(
+              "w-full justify-start text-sm font-medium",
+              collapsed && "justify-center"
+            )}
+          >
+            <LogOut className="w-4 h-4 mr-2 shrink-0" />
+            {!collapsed && "Logout"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Dim background on mobile */}
+      {mobileOpen && (
+        <div
+          className="absolute inset-0 bg-black/40 z-30 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex flex-col overflow-y-auto">
+        {/* Mobile Top Bar */}
+        <div className="md:hidden flex items-center h-14 px-4 border-b bg-background">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileOpen(true)}
+          >
+            <Menu className="h-5 w-5" />
+          </Button>
+          <h2 className="ml-3 font-semibold text-lg">Dashboard</h2>
+        </div>
+
+        {/* Page Content */}
+        <div className="flex-1 p-6">{children}</div>
+      </div>
+    </div>
+  );
+}

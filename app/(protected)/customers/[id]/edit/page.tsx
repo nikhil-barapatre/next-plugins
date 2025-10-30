@@ -2,10 +2,11 @@ import CustomerForm from '../../_components/customer-form'
 import { getCustomerById } from '../../_lib/server-api'
 
 export default async function EditCustomerPage({
-  params,
+  params: awaitedParams,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
+  const params = await awaitedParams;
   const customer = await getCustomerById(params.id)
 
   if (!customer) {
@@ -13,7 +14,7 @@ export default async function EditCustomerPage({
   }
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="container mx-auto py-10">   
       <h1 className="text-2xl font-bold mb-5">Edit Customer</h1>
       <CustomerForm customer={customer} />
     </div>

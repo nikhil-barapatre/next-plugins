@@ -1,9 +1,17 @@
 import { prisma } from '@/lib/db';
 import type { Prisma } from '@prisma/client';
-import type { GetProductsParams } from '../_types'
+import type { GetProductsParams, Product } from '../_types'
 
 // Server-side API functions (for Route Handlers, Server Components, etc.)
-export async function getProducts(params: GetProductsParams = {}) {
+export async function getProducts(params: GetProductsParams = {}): Promise<{
+  products: Product[];
+  pagination: {
+    page: number;
+    pageSize: number;
+    total: number;
+    totalPages: number;
+  };
+}> {
   const { page = 1, pageSize = 10, search = '' } = params
 
   const where: Prisma.ProductWhereInput = {}
@@ -24,11 +32,19 @@ export async function getProducts(params: GetProductsParams = {}) {
     }),
   ])
 
-  const serializedProducts = products.map((product) => ({
-    ...product,
-    price: product.price.toString(),
-    discounted_price: product.discounted_price?.toString() || null,
-  }))
+  const serializedProducts: Product[] = products.map((product) => {
+    const productStatus: 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | null =
+      (product.status === 'DRAFT' || product.status === 'ACTIVE' || product.status === 'ARCHIVED')
+        ? product.status
+        : 'DRAFT';
+
+    return {
+      ...product,
+      price: product.price.toString(),
+      discounted_price: product.discounted_price?.toString() || null,
+      status: productStatus,
+    }
+  })
 
   return {
     products: serializedProducts,
@@ -41,7 +57,7 @@ export async function getProducts(params: GetProductsParams = {}) {
   }
 }
 
-export async function getProductById(productId: string) {
+export async function getProductById(productId: string): Promise<Product | null> {
   const product = await prisma.product.findUnique({
     where: { id: productId },
   })
@@ -50,9 +66,15 @@ export async function getProductById(productId: string) {
     return null
   }
 
+  const productStatus: 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | null =
+    (product.status === 'DRAFT' || product.status === 'ACTIVE' || product.status === 'ARCHIVED')
+      ? product.status
+      : 'DRAFT';
+
   return {
     ...product,
     price: product.price.toString(),
     discounted_price: product.discounted_price?.toString() || null,
+    status: productStatus,
   }
 }

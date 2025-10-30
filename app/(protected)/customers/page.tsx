@@ -7,7 +7,7 @@ export default async function CustomersPage() {
   const { customers, pagination } = await getCustomers()
 
   return (
-    <div className="container mx-auto py-10">
+    <div className="p-0">
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-2xl font-bold">Customers</h1>
         <Link href="/customers/create">
