@@ -32,7 +32,7 @@ export default function CustomerList({ data }: CustomerListProps) {
   }
 
   return (
-    <div className="rounded-lg border">
+    <div className="rounded-lg border p-1">
       <Table>
         <TableHeader>
           <TableRow>

@@ -30,7 +30,7 @@ export interface GetProductsParams {
   pageSize?: number
   search?: string
   categories?: string[]
-  statuses?: string[]
+  statuses?: Array<'DRAFT' | 'ACTIVE' | 'ARCHIVED'>
   sortBy?: string
   sortOrder?: 'asc' | 'desc'
   dateFrom?: string

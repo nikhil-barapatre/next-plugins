@@ -1,7 +1,6 @@
 // app/(protected)/products/_components/product-list.tsx
 'use client'
 
-import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -34,7 +33,7 @@ export default function ProductList({ data }: ProductListProps) {
   }
 
   return (
-    <div className="rounded-lg border">
+    <div className="rounded-lg border p-1">
       <Table>
         <TableHeader>
           <TableRow>

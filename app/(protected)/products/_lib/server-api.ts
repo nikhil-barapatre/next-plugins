@@ -12,7 +12,7 @@ export async function getProducts(params: GetProductsParams = {}): Promise<{
     totalPages: number;
   };
 }> {
-  const { page = 1, pageSize = 10, search = '' } = params
+  const { page = 1, pageSize = 10, search = '', categories, statuses } = params
 
   const where: Prisma.ProductWhereInput = {}
   if (search) {
@@ -20,6 +20,14 @@ export async function getProducts(params: GetProductsParams = {}): Promise<{
       { name: { contains: search, mode: 'insensitive' } },
       { sku: { contains: search, mode: 'insensitive' } },
     ]
+  }
+
+  if (categories && categories.length > 0) {
+    where.category = { in: categories }
+  }
+
+  if (statuses && statuses.length > 0) {
+    where.status = { in: statuses as Prisma.EnumProductStatusFilter }
   }
 
   const [total, products] = await Promise.all([
@@ -77,4 +85,19 @@ export async function getProductById(productId: string): Promise<Product | null>
     discounted_price: product.discounted_price?.toString() || null,
     status: productStatus,
   }
+}
+
+export async function getDistinctCategories(): Promise<string[]> {
+  const categories = await prisma.product.findMany({
+    distinct: ['category'],
+    select: { category: true },
+    where: { category: { not: null, not: '' } },
+  });
+  return categories.map((c) => c.category as string);
+}
+
+export async function getDistinctStatuses(): Promise<Array<'DRAFT' | 'ACTIVE' | 'ARCHIVED'>> {
+  // Since status is an enum, we can hardcode or fetch distinct values if needed.
+  // For now, let's return the known enum values.
+  return ['DRAFT', 'ACTIVE', 'ARCHIVED'];
 }
