@@ -14,7 +14,7 @@ export default function ProductOverviewCards({
 
   const totalInventoryValue = products.reduce((sum, product) => {
     const price = parseFloat(product.price || '0')
-    const stock = parseInt(product.stock || '0', 10)
+    const stock = product.stock || 0
     return sum + price * stock
   }, 0)
 

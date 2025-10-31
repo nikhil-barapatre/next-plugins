@@ -27,7 +27,7 @@ export async function getProducts(params: GetProductsParams = {}): Promise<{
   }
 
   if (statuses && statuses.length > 0) {
-    where.status = { in: statuses as Prisma.EnumProductStatusFilter }
+    where.status = { in: statuses }
   }
 
   const [total, products] = await Promise.all([
@@ -91,7 +91,12 @@ export async function getDistinctCategories(): Promise<string[]> {
   const categories = await prisma.product.findMany({
     distinct: ['category'],
     select: { category: true },
-    where: { category: { not: null, not: '' } },
+    where: {
+      AND: [
+        { category: { not: null } },
+        { category: { not: '' } },
+      ]
+    },
   });
   return categories.map((c) => c.category as string);
 }

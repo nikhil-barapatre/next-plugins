@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import ProductList from './product-list'
 import ProductTableControls from './product-table-controls'
-import { Product } from '../_types'
-import { Pagination } from '../_lib/api-response'
+import { Product, PaginationMeta as Pagination } from '../_types'
 
 interface ProductsClientPageProps {
   products: Product[]
