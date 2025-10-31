@@ -1,13 +1,13 @@
-// app/(protected)/products/tsconfig.json
 {
-    "extends": "../../../tsconfig.json",
-    "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "@/products/*": ["./*"]
-      }
-    },
-    "include": ["**/*.ts", "**/*.tsx"],
-    "exclude": ["node_modules"]
-  }
-  
+  "extends": "../../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/products/*": ["./*"],
+      "@/components/*": ["../../../components/*"],
+      "@/lib/*": ["../../../lib/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

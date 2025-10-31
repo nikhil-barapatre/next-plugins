@@ -1,10 +1,8 @@
-// app/(protected)/products/[id]/edit/page.tsx
 import { getProductById } from '../../_lib/server-api'
 import ProductForm from '../../_components/product-form'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft } from 'lucide-react'
-import { Product } from '../../_types'
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = await params;

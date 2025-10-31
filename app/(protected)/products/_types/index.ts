@@ -1,4 +1,3 @@
-// app/(protected)/products/_types/index.ts
 import { Product as PrismaProduct } from '@prisma/client'
 
 // Client-safe product type (Decimal -> string conversion)
