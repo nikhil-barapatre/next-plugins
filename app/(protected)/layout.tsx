@@ -8,8 +8,6 @@ import {
   Package,
   Users,
   LogOut,
-  ChevronLeft,
-  ChevronRight,
   TextAlignJustify
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
