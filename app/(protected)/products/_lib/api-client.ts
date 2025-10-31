@@ -20,13 +20,16 @@ export async function getProducts(params: GetProductsParams = {}): Promise<{
   })
 
   const response = await fetch(`/api/products?${queryParams}`)
-  const result: ApiResponse<{ products: Product[]; pagination: PaginationMeta }> = await response.json()
+  const result: ApiResponse<Product[]> = await response.json()
 
   if (!result.success) {
     throw new Error(result.error || 'Failed to fetch products')
   }
 
-  return result.data
+  return {
+    products: result.data || [],
+    pagination: result.meta || { page: 1, pageSize: 10, total: 0, totalPages: 0 },
+  }
 }
 
 export async function getProductById(productId: string): Promise<Product> {

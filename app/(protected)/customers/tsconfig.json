@@ -3,10 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/products/*": ["./*"],
+      "@/customers/*": ["./*"],
       "@/components/*": ["../../../components/*"],
-      "@/lib/*": ["../../../lib/*"],
-      "@/hooks/*": ["../../../hooks/*"]
+      "@/lib/*": ["../../../lib/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

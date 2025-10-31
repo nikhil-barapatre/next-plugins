@@ -7,7 +7,7 @@ import type { ZodIssue } from 'zod'
 import { prisma } from '@/lib/db'
 import { productSchema } from '../../(protected)/products/_validations/product'
 import { successResponse, ErrorResponses } from '../../(protected)/products/_lib/api-response'
-import { Prisma } from '@prisma/client'
+import { getProducts } from '../../(protected)/products/_lib/server-api'
 import { Decimal } from '@prisma/client/runtime/library'
 
 // GET /api/products
@@ -19,9 +19,6 @@ export async function GET(request: NextRequest) {
     // }
 
     const { searchParams } = new URL(request.url)
-    const page = parseInt(searchParams.get('page') || '1')
-    const pageSize = parseInt(searchParams.get('pageSize') || '10')
-    const search = searchParams.get('search') || ''
     const productId = searchParams.get('id')
 
     if (productId) {
@@ -41,38 +38,22 @@ export async function GET(request: NextRequest) {
       return successResponse(serializedProduct)
     }
 
-    // Build filters...
-    const where: Prisma.ProductWhereInput = {}  
-    if (search) {
-      where.OR = [
-        { name: { contains: search, mode: 'insensitive' } },
-        { sku: { contains: search, mode: 'insensitive' } },
-      ]
-    }
+    const page = parseInt(searchParams.get('page') || '1')
+    const pageSize = parseInt(searchParams.get('pageSize') || '10')
+    const search = searchParams.get('search') || ''
+    const categories = searchParams.get('categories')?.split(',')
+    const statuses = searchParams.get('statuses')?.split(',') as Array<'DRAFT' | 'ACTIVE' | 'ARCHIVED'> | undefined
 
-    const [total, products] = await Promise.all([
-      prisma.product.count({ where }),
-      prisma.product.findMany({
-        where,
-        orderBy: { created_at: 'desc' },
-        skip: (page - 1) * pageSize,
-        take: pageSize,
-      }),
-    ])
+    const { products, pagination } = await getProducts({
+      page,
+      pageSize,
+      search,
+      categories,
+      statuses,
+    })
 
-    const serializedProducts = products.map((product) => ({
-      ...product,
-      price: product.price.toString(),
-      discounted_price: product.discounted_price?.toString() || null,
-    }))
-
-    return successResponse(serializedProducts, {
-      meta: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize),
-      },
+    return successResponse(products, {
+      meta: pagination,
     })
   } catch (error) {
     console.error('Get products error:', error)
