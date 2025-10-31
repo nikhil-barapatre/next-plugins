@@ -1,42 +1,21 @@
-import type { ApiResponse, GetCustomersParams, PaginationMeta, Customer } from '../_types/index'
-import type { CustomerFormData } from '../_validations/customer'
+import { Customer, CustomerFormData, customerSchema } from '../_validations/customer';
 
-// Client-side API functions for components
-export async function getCustomers(params: GetCustomersParams = {}): Promise<{
-  customers: Customer[]
-  pagination: PaginationMeta
-}> {
-  const queryParams = new URLSearchParams()
-
-  Object.entries(params).forEach(([key, value]) => {
-    if (value !== undefined) {
-      if (Array.isArray(value)) {
-        queryParams.set(key, value.join(','))
-      } else {
-        queryParams.set(key, String(value))
-      }
-    }
-  })
-
-  const response = await fetch(`/api/customers?${queryParams}`)
-  const result: ApiResponse<{ customers: Customer[]; pagination: PaginationMeta }> = await response.json()
-
-  if (!result.success) {
-    throw new Error(result.error || 'Failed to fetch customers')
+export class ValidationError extends Error {
+  constructor(public issues: { path: (string | number)[]; message: string }[]) {
+    super("Validation failed");
+    this.name = 'ValidationError';
   }
-
-  return result.data
 }
 
-export async function getCustomerById(customerId: string): Promise<Customer> {
-  const response = await fetch(`/api/customers?id=${customerId}`)
-  const result: ApiResponse<Customer> = await response.json()
-
-  if (!result.success) {
-    throw new Error(result.error || 'Failed to fetch customer')
+async function handleResponse<T>(response: Response): Promise<T> {
+  const data = await response.json();
+  if (!response.ok) {
+    if (data.errors) {
+      throw new ValidationError(data.errors);
+    }
+    throw new Error(data.error || "An unexpected error occurred.");
   }
-
-  return result.data as Customer
+  return data.data;
 }
 
 export async function createCustomer(data: CustomerFormData): Promise<Customer> {
@@ -44,52 +23,60 @@ export async function createCustomer(data: CustomerFormData): Promise<Customer> 
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  })
-
-  const result: ApiResponse<Customer> = await response.json()
-
-  if (!result.success) {
-    throw new Error(result.error || 'Failed to create customer')
-  }
-
-  return result.data
+  });
+  return handleResponse<Customer>(response);
 }
 
-export async function updateCustomer(customerId: string, data: CustomerFormData): Promise<Customer> {
-  const response = await fetch(`/api/customers?id=${customerId}`, {
+export async function updateCustomer(id: string, data: CustomerFormData): Promise<Customer> {
+  const response = await fetch(`/api/customers?id=${id}` , {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
-  })
-
-  const result: ApiResponse<Customer> = await response.json()
-
-  if (!result.success) {
-    throw new Error(result.error || 'Failed to update customer')
-  }
-
-  return result.data
+  });
+  return handleResponse<Customer>(response);
 }
 
-export async function deleteCustomer(customerId: string): Promise<void> {
-  const response = await fetch(`/api/customers?id=${customerId}`, {
-    method: 'DELETE',
-  })
+// You might also need a function to get a single customer
+export async function getCustomer(id: string): Promise<Customer> {
+  const response = await fetch(`/api/customers?id=${id}`);
+  return handleResponse<Customer>(response);
+}
 
-  if (!response.ok) {
-    let errorMessage = 'Failed to delete customer';
-    try {
-      const errorResult = await response.json();
-      if (errorResult.error) {
-        errorMessage = errorResult.error;
-      }
-    } catch (e) {
-      // If parsing JSON fails (e.g., no body or invalid JSON), use generic message
+// And a function to list customers, which you might already have
+export async function getCustomers(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<{ customers: Customer[]; pagination: any }> {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.set('page', params.page.toString());
+    if (params.pageSize) queryParams.set('pageSize', params.pageSize.toString());
+    if (params.search) queryParams.set('search', params.search);
+  
+    const response = await fetch(`/api/customers?${queryParams.toString()}`);
+    const data = await response.json();
+  
+    if (!response.ok) {
+      throw new Error(data.error || "Failed to fetch customers");
     }
-    throw new Error(errorMessage);
+  
+    return { customers: data.data, pagination: data.meta };
   }
+  
 
-  return;
-}
+export async function deleteCustomer(id: string): Promise<void> {
+    const response = await fetch(`/api/customers?id=${id}`, {
+      method: 'DELETE',
+    });
+  
+    if (!response.ok) {
+      const data = await response.json();
+      throw new Error(data.error || "Failed to delete customer");
+    }
+    // No data to return on successful deletion
+  }
+  
 
-export type { Customer };
+export type { Customer, CustomerFormData };
+
+
+
+
+
+

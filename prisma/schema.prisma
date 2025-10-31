@@ -21,7 +21,7 @@ model Product {
   stock           Int?      @default(0)
   category        String?   @db.VarChar(100)
   sub_category    String?   @db.VarChar(100)
-  status          String?   @default("DRAFT") @db.VarChar(20)
+  status          ProductStatus?   @default(DRAFT)
   in_stock        Boolean?  @default(true)
   charge_tax      Boolean?  @default(false)
   created_at      DateTime? @default(now()) @db.Timestamp()
@@ -40,4 +40,10 @@ model Customer {
   updated_at   DateTime? @default(now()) @db.Timestamp()
 
   @@map("customers")
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
 }

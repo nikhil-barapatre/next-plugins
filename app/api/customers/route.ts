@@ -1,11 +1,27 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { customerSchema } from "../../(protected)/customers/_validations/customer";
+import { getCustomers } from "../../(protected)/customers/_lib/server-api";
+import { ZodError } from "zod";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
-    const customers = await prisma.customer.findMany();
-    return NextResponse.json({ success: true, data: customers });
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1');
+    const pageSize = parseInt(searchParams.get('pageSize') || '10');
+    const search = searchParams.get('search') || '';
+
+    const { customers, pagination } = await getCustomers({
+      page,
+      pageSize,
+      search,
+    });
+
+    return NextResponse.json({ 
+      success: true, 
+      data: customers, 
+      meta: pagination 
+    });
   } catch (error) {
     console.error("[CUSTOMERS_GET]", error);
     return NextResponse.json({ success: false, error: "Internal error" }, { status: 500 });
@@ -15,19 +31,17 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, phone, address } = customerSchema.parse(body);
+    const data = customerSchema.parse(body);
 
     const customer = await prisma.customer.create({
-      data: {
-        name,
-        email,
-        phone,
-        address,
-      },
+      data,
     });
 
     return NextResponse.json({ success: true, data: customer });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json({ success: false, errors: error.issues }, { status: 400 });
+    }
     console.error("[CUSTOMERS_POST]", error);
     return NextResponse.json({ success: false, error: "Internal error" }, { status: 500 });
   }
@@ -43,20 +57,18 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const { name, email, phone, address } = customerSchema.parse(body);
+    const data = customerSchema.parse(body);
 
     const updatedCustomer = await prisma.customer.update({
       where: { id },
-      data: {
-        name,
-        email,
-        phone,
-        address,
-      },
+      data,
     });
 
     return NextResponse.json({ success: true, data: updatedCustomer });
   } catch (error) {
+    if (error instanceof ZodError) {
+      return NextResponse.json({ success: false, errors: error.issues }, { status: 400 });
+    }
     console.error("[CUSTOMERS_PUT]", error);
     return NextResponse.json({ success: false, error: "Internal error" }, { status: 500 });
   }

@@ -1,15 +1,6 @@
 import { Customer as PrismaCustomer } from '@prisma/client'
 
-// Client-safe customer type
 export type Customer = PrismaCustomer
-
-// API response types
-export interface ApiResponse<T> {
-  success: boolean
-  data: T
-  error?: string
-  meta?: Record<string, unknown>
-}
 
 // Pagination types
 export interface PaginationMeta {

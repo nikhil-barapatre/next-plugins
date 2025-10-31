@@ -17,7 +17,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { customerSchema, CustomerFormData } from '../_validations/customer'
-import { createCustomer, updateCustomer, Customer } from '../_lib/api-client'
+import { createCustomer, updateCustomer, Customer, ValidationError } from '../_lib/api-client'
 
 interface CustomerFormProps {
   customer?: Customer
@@ -45,9 +45,19 @@ export default function CustomerForm({ customer }: CustomerFormProps) {
         toast.success('Customer created successfully')
       }
       router.push('/customers')
+      router.refresh() // To see the updated list
     } catch (error) {
-      toast.error('Failed to save customer')
-      console.error(error)
+      if (error instanceof ValidationError) {
+        error.issues.forEach((issue) => {
+          form.setError(issue.path[0] as keyof CustomerFormData, {
+            type: 'server',
+            message: issue.message,
+          })
+        })
+      } else {
+        toast.error('An unexpected error occurred')
+        console.error(error)
+      }
     }
   }
 
@@ -111,7 +121,9 @@ export default function CustomerForm({ customer }: CustomerFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">{customer ? 'Update' : 'Create'} Customer</Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? 'Saving...' : (customer ? 'Update' : 'Create') + ' Customer'}
+        </Button>
       </form>
     </Form>
   )

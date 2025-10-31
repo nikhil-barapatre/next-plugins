@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -9,63 +10,86 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { deleteCustomer } from '../_lib/api-client'
-import { CustomerListProps } from '../_types'
+import { Customer } from '../_types'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
-export default function CustomerList({ data }: CustomerListProps) {
-  const router = useRouter()
-  const handleDelete = async (customerId: string) => {
-    if (confirm('Are you sure you want to delete this customer?')) {
-      try {
-        await deleteCustomer(customerId)
-        toast.success('Customer deleted successfully')
-        router.refresh() // Re-fetches data and re-renders the page
-      } catch (error) {
-        console.error('Failed to delete customer:', error)
-        toast.error('Failed to delete customer')
-      }
+interface CustomerListProps {
+  data: Customer[]
+  onDeleteSuccess: (customerId: string) => void
+}
+
+export default function CustomerList({ data, onDeleteSuccess }: CustomerListProps) {
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [customerIdToDelete, setCustomerIdToDelete] = useState<string | null>(null)
+
+  const openDeleteDialog = (customerId: string) => {
+    setCustomerIdToDelete(customerId)
+    setDialogOpen(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!customerIdToDelete) return
+
+    try {
+      await deleteCustomer(customerIdToDelete)
+      toast.success('Customer deleted successfully')
+      onDeleteSuccess(customerIdToDelete)
+    } catch (error) {
+      console.error('Failed to delete customer:', error)
+      toast.error('Failed to delete customer')
+    } finally {
+      setCustomerIdToDelete(null)
     }
   }
 
   return (
-    <div className="rounded-lg border p-1">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Customer Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((customer) => (
-            <TableRow key={customer.id}>
-              <TableCell className="font-medium">{customer.name}</TableCell>
-              <TableCell>{customer.email}</TableCell>
-              <TableCell>{customer.phone}</TableCell>
-              <TableCell className="flex gap-2">
-                <Link href={`/customers/${customer.id}/edit`}>
-                  <Button variant="outline" size="sm">
-                    Edit
-                  </Button>
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDelete(customer.id)}
-                  className="text-red-600 hover:text-red-700"
-                >
-                  Delete
-                </Button>
-              </TableCell>
+    <>
+      <ConfirmationDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        title="Are you sure?"
+        description="This action cannot be undone. This will permanently delete the customer."
+        onConfirm={handleConfirmDelete}
+      />
+      <div className="rounded-lg border p-1">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Customer Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+          </TableHeader>
+          <TableBody>
+            {data.map((customer) => (
+              <TableRow key={customer.id}>
+                <TableCell className="font-medium">{customer.name}</TableCell>
+                <TableCell>{customer.email}</TableCell>
+                <TableCell>{customer.phone}</TableCell>
+                <TableCell className="flex gap-2">
+                  <Link href={`/customers/${customer.id}/edit`}>
+                    <Button variant="outline" size="sm">
+                      Edit
+                    </Button>
+                  </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => openDeleteDialog(customer.id)}
+                    className="text-red-600 hover:text-red-700"
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+    </>
   )
 }

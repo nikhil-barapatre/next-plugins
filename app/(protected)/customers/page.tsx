@@ -1,10 +1,20 @@
 import { getCustomers } from './_lib/server-api'
-import CustomerList from './_components/customer-list'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
+import CustomersClientPage from './_components/customers-client-page'
 
-export default async function CustomersPage() {
-  const { customers, pagination } = await getCustomers()
+interface CustomersPageProps {
+  searchParams: {
+    page?: string
+    search?: string
+  }
+}
+
+export default async function CustomersPage({ searchParams }: CustomersPageProps) {
+  const page = Number(searchParams.page) || 1;
+  const search = searchParams.search || '';
+
+  const { customers, pagination } = await getCustomers({ page, search })
 
   return (
     <div className="p-4">
@@ -14,7 +24,10 @@ export default async function CustomersPage() {
           <Button>Create Customer</Button>
         </Link>
       </div>
-      <CustomerList data={customers} pagination={pagination} />
+      <CustomersClientPage 
+        initialCustomers={customers} 
+        initialPagination={pagination} 
+      />
     </div>
   )
 }

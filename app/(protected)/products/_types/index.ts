@@ -36,6 +36,18 @@ export interface GetProductsParams {
   dateTo?: string
 }
 
+export interface ProductSearchParams {
+  page?: string;
+  pageSize?: string;
+  search?: string;
+  categories?: string;
+  statuses?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  dateFrom?: string;
+  dateTo?: string;
+}
+
 // Form data types
 
 // Component props
@@ -54,5 +66,5 @@ export interface PaginationData {
 // Filter types
 export interface ProductFilters {
   categories: string[]
-  statuses: Array<{ value: string; label: string }>
-}
+  statuses: Array<{ value: string; label: string }>}
+
