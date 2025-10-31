@@ -2,6 +2,7 @@ import { getCustomers } from './_lib/server-api'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import CustomersClientPage from './_components/customers-client-page'
+import { Suspense } from 'react'
 
 interface CustomersPageProps {
   searchParams: {
@@ -24,10 +25,12 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
           <Button>Create Customer</Button>
         </Link>
       </div>
-      <CustomersClientPage 
-        initialCustomers={customers} 
-        initialPagination={pagination} 
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <CustomersClientPage 
+          initialCustomers={customers} 
+          initialPagination={pagination} 
+        />
+      </Suspense>
     </div>
   )
 }

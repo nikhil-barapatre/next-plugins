@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 import ProductOverviewCards from './_components/product-overview-cards'
 import ProductsClientPage from './_components/products-client-page'
 import { ProductSearchParams } from './_types'
+import { Suspense } from 'react'
 
 interface ProductsPageProps {
   searchParams: ProductSearchParams
@@ -31,12 +32,14 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       <ProductOverviewCards products={products} pagination={pagination} />
 
-      <ProductsClientPage
-        products={products}
-        pagination={pagination}
-        distinctCategories={distinctCategories}
-        distinctStatuses={distinctStatuses}
-      />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ProductsClientPage
+          products={products}
+          pagination={pagination}
+          distinctCategories={distinctCategories}
+          distinctStatuses={distinctStatuses}
+        />
+      </Suspense>
     </div>
 
   )

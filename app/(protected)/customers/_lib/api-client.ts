@@ -1,4 +1,5 @@
-import { Customer, CustomerFormData, customerSchema } from '../_validations/customer';
+import { CustomerFormData, customerSchema } from '../_validations/customer';
+import type { Customer } from '../_types';
 
 export class ValidationError extends Error {
   constructor(public issues: { path: (string | number)[]; message: string }[]) {
