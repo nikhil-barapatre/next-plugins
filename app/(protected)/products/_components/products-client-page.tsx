@@ -125,7 +125,7 @@ export default function ProductsClientPage(props: ProductsClientPageProps) {
     fetchProducts()
   }, [searchParams])
 
-  const handleDeleteSuccess = (productId: string) => {
+  const handleDeleteSuccess = () => {
     router.refresh()
   }
 

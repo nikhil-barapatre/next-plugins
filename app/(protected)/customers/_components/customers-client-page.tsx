@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebounce } from '@/hooks/useDebounce'
 
@@ -12,15 +12,31 @@ import { Input } from '@/components/ui/input'
 import PaginationControls from '@/components/ui/pagination-controls'
 import { Button } from '@/components/ui/button'
 import CustomerFormDialog from './customer-form-dialog'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 interface CustomersClientPageProps {
   initialCustomers: Customer[]
   initialPagination: PaginationMeta
+  distinctStatuses: string[]
+}
+
+const getInitialState = (key: string, defaultValue: string) => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem(key) || defaultValue
+  }
+  return defaultValue
 }
 
 export default function CustomersClientPage({
   initialCustomers,
-  initialPagination
+  initialPagination,
+  distinctStatuses,
 }: CustomersClientPageProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -32,24 +48,33 @@ export default function CustomersClientPage({
   const [error, setError] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
 
-  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
+  const [searchTerm, setSearchTerm] = useState(
+    getInitialState('customer_search', searchParams.get('search') || '')
+  )
+  const [status, setStatus] = useState(
+    getInitialState('customer_status', searchParams.get('status') || '')
+  )
   const debouncedSearch = useDebounce(searchTerm, 500)
 
-  const isInitialMount = useRef(true);
+  useEffect(() => {
+    localStorage.setItem('customer_search', searchTerm)
+  }, [searchTerm])
+
+  useEffect(() => {
+    localStorage.setItem('customer_status', status)
+  }, [status])
 
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
-      const newSearchParams = new URLSearchParams(searchParams.toString())
+      const newSearchParams = new URLSearchParams()
       for (const [key, value] of Object.entries(params)) {
-        if (value === null) {
-          newSearchParams.delete(key)
-        } else {
+        if (value !== null && value !== '') {
           newSearchParams.set(key, String(value))
         }
       }
       return newSearchParams.toString()
     },
-    [searchParams]
+    []
   )
 
   const fetchCustomers = useCallback(async () => {
@@ -58,6 +83,7 @@ export default function CustomersClientPage({
     try {
       const params = {
         search: searchParams.get('search') || '',
+        status: searchParams.get('status') || '',
         page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
       };
       const { customers, pagination } = await getCustomers(params);
@@ -79,42 +105,61 @@ export default function CustomersClientPage({
     fetchCustomers(); // Refetch data to show the new/updated customer
   }
 
-  // Effect to update URL when search term changes
+  const handleReset = () => {
+    setSearchTerm('')
+    setStatus('')
+  }
+
+  // Effect to update URL when search term or status changes
   useEffect(() => {
     const currentSearch = searchParams.get('search') || '';
-    if (debouncedSearch !== currentSearch) {
+    const currentStatus = searchParams.get('status') || '';
+
+    if (debouncedSearch !== currentSearch || status !== currentStatus) {
       const newQuery = createQueryString({
         search: debouncedSearch,
-        page: 1, // Reset to page 1 for new search
+        status: status,
+        page: 1, // Reset to page 1 for new search/filter
       });
       router.push(`${pathname}?${newQuery}`, { scroll: false });
     }
-  }, [debouncedSearch, pathname, router, searchParams, createQueryString]);
+  }, [debouncedSearch, status, pathname, router, searchParams, createQueryString]);
 
   // Effect to fetch data when searchParams change
   useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-
-    const load = async () => {
-      await fetchCustomers();
-    };
-
-    load();
+    fetchCustomers();
   }, [searchParams, fetchCustomers]);
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder="Search by name or email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-80"
-        />
+      <div className="flex justify-end mb-4">
         <Button onClick={() => setIsFormOpen(true)}>Create Customer</Button>
+      </div>
+
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex items-center gap-2">
+          <Input
+            placeholder="Search by name or email..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-80"
+          />
+          <Select onValueChange={setStatus} value={status}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              {distinctStatuses.map((status) => (
+                <SelectItem key={status} value={status}>
+                  {status}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button onClick={handleReset} variant="outline">
+          Reset
+        </Button>
       </div>
 
       <CustomerFormDialog

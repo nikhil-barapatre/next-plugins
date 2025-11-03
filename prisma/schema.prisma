@@ -36,6 +36,7 @@ model Customer {
   email        String    @unique @db.VarChar(255)
   phone        String?   @db.VarChar(50)
   address      String?   @db.VarChar(255)
+  status       CustomerStatus @default(ACTIVE)
   created_at   DateTime? @default(now()) @db.Timestamp()
   updated_at   DateTime? @default(now()) @db.Timestamp()
 
@@ -46,4 +47,9 @@ enum ProductStatus {
   DRAFT
   ACTIVE
   ARCHIVED
+}
+
+enum CustomerStatus {
+  ACTIVE
+  INACTIVE
 }

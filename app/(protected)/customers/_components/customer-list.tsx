@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { Badge } from '@/components/ui/badge'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { deleteCustomer } from '../_lib/api-client'
 import { Customer } from '../_types'
@@ -79,6 +80,7 @@ export default function CustomerList({ data, onDeleteSuccess }: CustomerListProp
               <TableHead>Customer Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -88,6 +90,11 @@ export default function CustomerList({ data, onDeleteSuccess }: CustomerListProp
                 <TableCell className="font-medium">{customer.name}</TableCell>
                 <TableCell>{customer.email}</TableCell>
                 <TableCell>{customer.phone}</TableCell>
+                <TableCell>
+                  <Badge variant={customer.status === 'ACTIVE' ? 'default' : 'destructive'}>
+                    {customer.status}
+                  </Badge>
+                </TableCell>
                 <TableCell className="flex gap-2">
                   <Button variant="outline" size="sm" onClick={() => handleEditClick(customer)}>
                     Edit

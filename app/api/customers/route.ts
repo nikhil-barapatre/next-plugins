@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { customerSchema } from "../../(protected)/customers/_validations/customer";
+import { customerApiSchema } from "../../(protected)/customers/_validations/customer";
 import { getCustomers } from "../../(protected)/customers/_lib/server-api";
 import { ZodError } from "zod";
 
@@ -10,11 +10,13 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const pageSize = parseInt(searchParams.get('pageSize') || '10');
     const search = searchParams.get('search') || '';
+    const status = searchParams.get('status') || '';
 
     const { customers, pagination } = await getCustomers({
       page,
       pageSize,
       search,
+      status,
     });
 
     return NextResponse.json({ 
@@ -31,7 +33,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const data = customerSchema.parse(body);
+    const data = customerApiSchema.parse(body);
 
     const customer = await prisma.customer.create({
       data,
@@ -57,7 +59,7 @@ export async function PUT(req: Request) {
     }
 
     const body = await req.json();
-    const data = customerSchema.parse(body);
+    const data = customerApiSchema.parse(body);
 
     const updatedCustomer = await prisma.customer.update({
       where: { id },

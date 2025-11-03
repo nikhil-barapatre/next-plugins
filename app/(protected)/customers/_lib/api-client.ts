@@ -1,5 +1,5 @@
 import { CustomerFormData } from '../_validations/customer';
-import type { Customer } from '../_types';
+import type { Customer, PaginationMeta } from '../_types';
 
 export class ValidationError extends Error {
   constructor(public issues: { path: (string | number)[]; message: string }[]) {
@@ -44,11 +44,12 @@ export async function getCustomer(id: string): Promise<Customer> {
 }
 
 // And a function to list customers, which you might already have
-export async function getCustomers(params: { page?: number; pageSize?: number; search?: string } = {}): Promise<{ customers: Customer[]; pagination: any }> {
+export async function getCustomers(params: { page?: number; pageSize?: number; search?: string, status?: string } = {}): Promise<{ customers: Customer[]; pagination: PaginationMeta }> {
     const queryParams = new URLSearchParams();
     if (params.page) queryParams.set('page', params.page.toString());
     if (params.pageSize) queryParams.set('pageSize', params.pageSize.toString());
     if (params.search) queryParams.set('search', params.search);
+    if (params.status) queryParams.set('status', params.status);
   
     const response = await fetch(`/api/customers?${queryParams.toString()}`);
     const data = await response.json();
@@ -71,6 +72,15 @@ export async function deleteCustomer(id: string): Promise<void> {
       throw new Error(data.error || "Failed to delete customer");
     }
     // No data to return on successful deletion
+  }
+
+  export async function getCustomerStats() {
+    const response = await fetch('/api/customers/stats');
+    const result = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Failed to fetch customer stats');
+    }
+    return result.data;
   }
   
 

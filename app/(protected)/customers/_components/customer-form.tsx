@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Switch } from '@/components/ui/switch'
 import { customerSchema, CustomerFormData } from '../_validations/customer'
 import { createCustomer, updateCustomer, Customer, ValidationError } from '../_lib/api-client'
 
@@ -26,6 +27,8 @@ interface CustomerFormProps {
 
 export default function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
   const router = useRouter()
+  const isEditing = !!customer
+
   const form = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
@@ -33,16 +36,22 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
       email: customer?.email || '',
       phone: customer?.phone || '',
       address: customer?.address || '',
+      status: isEditing ? customer.status === 'ACTIVE' : true,
     },
   })
 
   const onSubmit = async (data: CustomerFormData) => {
     try {
+      const apiData = {
+        ...data,
+        status: data.status ? 'ACTIVE' : 'INACTIVE',
+      }
+
       if (customer) {
-        await updateCustomer(customer.id, data)
+        await updateCustomer(customer.id, apiData as any)
         toast.success('Customer updated successfully')
       } else {
-        await createCustomer(data)
+        await createCustomer(apiData as any)
         toast.success('Customer created successfully')
       }
       onSuccess()
@@ -122,6 +131,28 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
             </FormItem>
           )}
         />
+        {isEditing && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                <div className="space-y-0.5">
+                  <FormLabel className="text-base">Active Status</FormLabel>
+                  <p className="text-sm text-muted-foreground">
+                    Inactive customers cannot be assigned to new orders.
+                  </p>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
         <Button type="submit" disabled={form.formState.isSubmitting}>
           {form.formState.isSubmitting ? 'Saving...' : (customer ? 'Update' : 'Create') + ' Customer'}
         </Button>

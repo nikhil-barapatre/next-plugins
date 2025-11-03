@@ -1,10 +1,10 @@
 import { prisma } from '@/lib/db';
-import type { Prisma } from '@prisma/client';
+import type { Prisma, CustomerStatus } from '@prisma/client';
 import type { GetCustomersParams } from '../_types'
 
 // Server-side API functions (for Route Handlers, Server Components, etc.)
 export async function getCustomers(params: GetCustomersParams = {}) {
-  const { page = 1, pageSize = 10, search = '' } = params
+  const { page = 1, pageSize = 10, search = '', status } = params
 
   const where: Prisma.CustomerWhereInput = {}
   if (search) {
@@ -12,6 +12,10 @@ export async function getCustomers(params: GetCustomersParams = {}) {
       { name: { contains: search, mode: 'insensitive' } },
       { email: { contains: search, mode: 'insensitive' } },
     ]
+  }
+
+  if (status) {
+    where.status = status as CustomerStatus;
   }
 
   const [total, customers] = await Promise.all([
@@ -46,3 +50,37 @@ export async function getCustomerById(customerId: string) {
 
   return customer
 }
+
+export async function getCustomerStats() {
+    const totalCustomers = await prisma.customer.count();
+  
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  
+    const newCustomersThisMonth = await prisma.customer.count({
+      where: {
+        created_at: {
+          gte: startOfMonth,
+        },
+      },
+    });
+  
+    const activeCustomers = await prisma.customer.count({
+      where: {
+        status: 'ACTIVE',
+      },
+    });
+  
+    const inactiveCustomers = await prisma.customer.count({
+      where: {
+        status: 'INACTIVE',
+      },
+    });
+  
+    return {
+      totalCustomers,
+      newCustomersThisMonth,
+      activeCustomers,
+      inactiveCustomers,
+    };
+  }
