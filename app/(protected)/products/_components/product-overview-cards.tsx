@@ -28,20 +28,20 @@ export default function ProductOverviewCards({
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-500">Total Products</h3>
+      <div className="bg-card p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-semibold text-muted-foreground">Total Products</h3>
         <p className="text-3xl font-bold">{totalProducts}</p>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-500">Total Inventory Value</h3>
+      <div className="bg-card p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-semibold text-muted-foreground">Total Inventory Value</h3>
         <p className="text-3xl font-bold">${totalInventoryValue.toFixed(2)}</p>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-500">Active Products</h3>
+      <div className="bg-card p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-semibold text-muted-foreground">Active Products</h3>
         <p className="text-3xl font-bold">{activeProducts}</p>
       </div>
-      <div className="bg-white p-4 rounded-lg shadow">
-        <h3 className="text-lg font-semibold text-gray-500">Out of Stock / Archived</h3>
+      <div className="bg-card p-4 rounded-lg shadow-sm">
+        <h3 className="text-lg font-semibold text-muted-foreground">Out of Stock / Archived</h3>
         <p className="text-3xl font-bold">{outOfStockOrArchived}</p>
       </div>
     </div>

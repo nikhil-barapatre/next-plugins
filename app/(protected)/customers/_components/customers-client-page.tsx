@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebounce } from '@/hooks/useDebounce'
 
@@ -18,9 +18,9 @@ interface CustomersClientPageProps {
   initialPagination: PaginationMeta
 }
 
-export default function CustomersClientPage({ 
-  initialCustomers, 
-  initialPagination 
+export default function CustomersClientPage({
+  initialCustomers,
+  initialPagination
 }: CustomersClientPageProps) {
   const router = useRouter()
   const pathname = usePathname()
@@ -34,6 +34,8 @@ export default function CustomersClientPage({
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
   const debouncedSearch = useDebounce(searchTerm, 500)
+
+  const isInitialMount = useRef(true);
 
   const createQueryString = useCallback(
     (params: Record<string, string | number | null>) => {
@@ -50,57 +52,63 @@ export default function CustomersClientPage({
     [searchParams]
   )
 
+  const fetchCustomers = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const params = {
+        search: searchParams.get('search') || '',
+        page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+      };
+      const { customers, pagination } = await getCustomers(params);
+      setCustomers(customers);
+      setPagination(pagination);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unknown error occurred');
+    }
+    setIsLoading(false);
+  }, [searchParams]);
+
   const handleDeleteSuccess = (customerId: string) => {
     setCustomers((prevCustomers) => prevCustomers.filter((c) => c.id !== customerId))
+    fetchCustomers(); // Refetch to update pagination meta
   }
 
   const handleFormSuccess = () => {
     setIsFormOpen(false)
-    // Optionally, you can refresh the data here to show the new/updated customer
-    // For now, we rely on router.refresh() inside the form
+    fetchCustomers(); // Refetch data to show the new/updated customer
   }
 
   // Effect to update URL when search term changes
   useEffect(() => {
     const currentSearch = searchParams.get('search') || '';
     if (debouncedSearch !== currentSearch) {
-        const newQuery = createQueryString({
-          search: debouncedSearch,
-          page: 1, // Reset to page 1 for new search
-        });
-        router.push(`${pathname}?${newQuery}`, { scroll: false });
+      const newQuery = createQueryString({
+        search: debouncedSearch,
+        page: 1, // Reset to page 1 for new search
+      });
+      router.push(`${pathname}?${newQuery}`, { scroll: false });
     }
   }, [debouncedSearch, pathname, router, searchParams, createQueryString]);
 
   // Effect to fetch data when searchParams change
   useEffect(() => {
-    const fetchCustomers = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const params = {
-          search: searchParams.get('search') || '',
-          page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
-        };
-        const { customers, pagination } = await getCustomers(params);
-        setCustomers(customers);
-        setPagination(pagination);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'An unknown error occurred');
-      }
-      setIsLoading(false);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    const load = async () => {
+      await fetchCustomers();
     };
 
-    // We have initial data, but we should fetch if search params are different
-    // from what the initial data represents, or if the user navigates.
-    // A simple approach is to always fetch when searchParams change.
-    fetchCustomers();
-  }, [searchParams]);
+    load();
+  }, [searchParams, fetchCustomers]);
 
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <Input 
+        <Input
           placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -118,13 +126,13 @@ export default function CustomersClientPage({
       {isLoading ? (
         <div className="text-center">Loading customers...</div>
       ) : error ? (
-        <div className="text-center text-red-500">Error: {error}</div>
+        <div className="text-center">Error: {error}</div>
       ) : (
         <CustomerList data={customers} onDeleteSuccess={handleDeleteSuccess} />
       )}
 
-      <PaginationControls 
-        pagination={pagination} 
+      <PaginationControls
+        pagination={pagination}
         isLoading={isLoading}
       />
     </div>

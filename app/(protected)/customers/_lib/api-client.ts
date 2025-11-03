@@ -1,4 +1,4 @@
-import { CustomerFormData, customerSchema } from '../_validations/customer';
+import { CustomerFormData } from '../_validations/customer';
 import type { Customer } from '../_types';
 
 export class ValidationError extends Error {

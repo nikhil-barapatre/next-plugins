@@ -238,7 +238,9 @@ export default function ProductForm({ product }: ProductFormProps) {
             />
           </div>
         </div>
-        <Button type="submit">{product ? 'Update' : 'Create'} Product</Button>
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          {form.formState.isSubmitting ? 'Saving...' : (product ? 'Update' : 'Create') + ' Product'}
+        </Button>
       </form>
     </Form>
   )
