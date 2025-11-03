@@ -1,4 +1,4 @@
-import { CustomerFormData } from '../_validations/customer';
+import { CustomerApiData, CustomerFormData } from '../_validations/customer';
 import type { Customer, PaginationMeta } from '../_types';
 
 export class ValidationError extends Error {
@@ -19,7 +19,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
   return data.data;
 }
 
-export async function createCustomer(data: CustomerFormData): Promise<Customer> {
+export async function createCustomer(data: CustomerApiData): Promise<Customer> {
   const response = await fetch('/api/customers', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,7 +28,7 @@ export async function createCustomer(data: CustomerFormData): Promise<Customer> 
   return handleResponse<Customer>(response);
 }
 
-export async function updateCustomer(id: string, data: CustomerFormData): Promise<Customer> {
+export async function updateCustomer(id: string, data: CustomerApiData): Promise<Customer> {
   const response = await fetch(`/api/customers?id=${id}` , {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },

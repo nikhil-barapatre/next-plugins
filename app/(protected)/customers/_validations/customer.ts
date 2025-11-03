@@ -13,3 +13,4 @@ export const customerApiSchema = customerSchema.extend({
   });
 
 export type CustomerFormData = z.infer<typeof customerSchema>
+export type CustomerApiData = z.infer<typeof customerApiSchema>

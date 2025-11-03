@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebounce } from '@/hooks/useDebounce'
 
@@ -79,45 +79,6 @@ export default function CustomersClientPage({
     []
   )
 
-  const fetchStats = useCallback(async () => {
-    try {
-      const data = await getCustomerStats();
-      setStats(data);
-    } catch (err) {
-      console.error(err);
-    }
-  }, []);
-
-  const fetchCustomers = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const params = {
-        search: searchParams.get('search') || '',
-        status: searchParams.get('status') || '',
-        page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
-      };
-      const { customers, pagination } = await getCustomers(params);
-      setCustomers(customers);
-      setPagination(pagination);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An unknown error occurred');
-    }
-    setIsLoading(false);
-  }, [searchParams]);
-
-  const handleDeleteSuccess = (customerId: string) => {
-    setCustomers((prevCustomers) => prevCustomers.filter((c) => c.id !== customerId))
-    fetchCustomers(); // Refetch to update pagination meta
-    fetchStats();
-  }
-
-  const handleFormSuccess = () => {
-    setIsFormOpen(false)
-    fetchCustomers(); // Refetch data to show the new/updated customer
-    fetchStats();
-  }
-
   const handleReset = () => {
     setSearchTerm('')
     setStatus('')
@@ -140,9 +101,86 @@ export default function CustomersClientPage({
 
   // Effect to fetch data when searchParams change
   useEffect(() => {
-    fetchCustomers();
-    fetchStats();
-  }, [searchParams, fetchCustomers, fetchStats]);
+    const fetchCustomersAndStats = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = {
+          search: searchParams.get('search') || '',
+          status: searchParams.get('status') || '',
+          page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+        };
+        const [{ customers, pagination }, stats] = await Promise.all([
+          getCustomers(params),
+          getCustomerStats(),
+        ]);
+        setCustomers(customers);
+        setPagination(pagination);
+        setStats(stats);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      }
+      setIsLoading(false);
+    };
+
+    fetchCustomersAndStats();
+  }, [searchParams]);
+
+  const handleDeleteSuccess = (customerId: string) => {
+    setCustomers((prevCustomers) => prevCustomers.filter((c) => c.id !== customerId))
+    // Refetch to update pagination meta
+    const fetchCustomersAndStats = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = {
+          search: searchParams.get('search') || '',
+          status: searchParams.get('status') || '',
+          page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+        };
+        const [{ customers, pagination }, stats] = await Promise.all([
+          getCustomers(params),
+          getCustomerStats(),
+        ]);
+        setCustomers(customers);
+        setPagination(pagination);
+        setStats(stats);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      }
+      setIsLoading(false);
+    };
+
+    fetchCustomersAndStats()
+  }
+
+  const handleFormSuccess = () => {
+    setIsFormOpen(false)
+    // Refetch data to show the new/updated customer
+    const fetchCustomersAndStats = async () => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const params = {
+          search: searchParams.get('search') || '',
+          status: searchParams.get('status') || '',
+          page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
+        };
+        const [{ customers, pagination }, stats] = await Promise.all([
+          getCustomers(params),
+          getCustomerStats(),
+        ]);
+        setCustomers(customers);
+        setPagination(pagination);
+        setStats(stats);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      }
+      setIsLoading(false);
+    };
+
+    fetchCustomersAndStats()
+  }
 
   return (
     <div>

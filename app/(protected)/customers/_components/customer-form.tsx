@@ -17,8 +17,9 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
-import { customerSchema, CustomerFormData } from '../_validations/customer'
-import { createCustomer, updateCustomer, Customer, ValidationError } from '../_lib/api-client'
+import { customerSchema, CustomerFormData, CustomerApiData } from '../_validations/customer'
+import { createCustomer, updateCustomer, ValidationError } from '../_lib/api-client'
+import { Customer } from '../_types'
 
 interface CustomerFormProps {
   customer?: Customer
@@ -42,16 +43,16 @@ export default function CustomerForm({ customer, onSuccess }: CustomerFormProps)
 
   const onSubmit = async (data: CustomerFormData) => {
     try {
-      const apiData = {
+      const apiData: CustomerApiData = {
         ...data,
         status: data.status ? 'ACTIVE' : 'INACTIVE',
       }
 
       if (customer) {
-        await updateCustomer(customer.id, apiData as any)
+        await updateCustomer(customer.id, apiData)
         toast.success('Customer updated successfully')
       } else {
-        await createCustomer(apiData as any)
+        await createCustomer(apiData)
         toast.success('Customer created successfully')
       }
       onSuccess()
