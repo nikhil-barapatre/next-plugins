@@ -21,9 +21,10 @@ import { createCustomer, updateCustomer, Customer, ValidationError } from '../_l
 
 interface CustomerFormProps {
   customer?: Customer
+  onSuccess: () => void
 }
 
-export default function CustomerForm({ customer }: CustomerFormProps) {
+export default function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
   const router = useRouter()
   const form = useForm<CustomerFormData>({
     resolver: zodResolver(customerSchema),
@@ -44,7 +45,7 @@ export default function CustomerForm({ customer }: CustomerFormProps) {
         await createCustomer(data)
         toast.success('Customer created successfully')
       }
-      router.push('/customers')
+      onSuccess()
       router.refresh() // To see the updated list
     } catch (error) {
       if (error instanceof ValidationError) {

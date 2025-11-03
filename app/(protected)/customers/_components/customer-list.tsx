@@ -13,8 +13,8 @@ import {
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { deleteCustomer } from '../_lib/api-client'
 import { Customer } from '../_types'
-import Link from 'next/link'
 import { toast } from 'sonner'
+import CustomerFormDialog from './customer-form-dialog'
 
 interface CustomerListProps {
   data: Customer[]
@@ -24,6 +24,8 @@ interface CustomerListProps {
 export default function CustomerList({ data, onDeleteSuccess }: CustomerListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [customerIdToDelete, setCustomerIdToDelete] = useState<string | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | undefined>(undefined)
 
   const openDeleteDialog = (customerId: string) => {
     setCustomerIdToDelete(customerId)
@@ -45,6 +47,16 @@ export default function CustomerList({ data, onDeleteSuccess }: CustomerListProp
     }
   }
 
+  const handleEditClick = (customer: Customer) => {
+    setSelectedCustomer(customer)
+    setIsFormOpen(true)
+  }
+
+  const handleFormSuccess = () => {
+    setIsFormOpen(false)
+    // You might want to refresh the data here
+  }
+
   return (
     <>
       <ConfirmationDialog
@@ -53,6 +65,12 @@ export default function CustomerList({ data, onDeleteSuccess }: CustomerListProp
         title="Are you sure?"
         description="This action cannot be undone. This will permanently delete the customer."
         onConfirm={handleConfirmDelete}
+      />
+      <CustomerFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        customer={selectedCustomer}
+        onSuccess={handleFormSuccess}
       />
       <div className="rounded-lg border p-1">
         <Table>
@@ -71,11 +89,9 @@ export default function CustomerList({ data, onDeleteSuccess }: CustomerListProp
                 <TableCell>{customer.email}</TableCell>
                 <TableCell>{customer.phone}</TableCell>
                 <TableCell className="flex gap-2">
-                  <Link href={`/customers/${customer.id}/edit`}>
-                    <Button variant="outline" size="sm">
-                      Edit
-                    </Button>
-                  </Link>
+                  <Button variant="outline" size="sm" onClick={() => handleEditClick(customer)}>
+                    Edit
+                  </Button>
                   <Button
                     variant="ghost"
                     size="sm"

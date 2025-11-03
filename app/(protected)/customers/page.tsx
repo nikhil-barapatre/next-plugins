@@ -1,6 +1,4 @@
 import { getCustomers } from './_lib/server-api'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
 import CustomersClientPage from './_components/customers-client-page'
 import { Suspense } from 'react'
 
@@ -21,9 +19,6 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
     <div className="p-4">
       <div className="flex justify-between items-center mb-5">
         <h1 className="text-2xl font-bold">Customers</h1>
-        <Link href="/customers/create">
-          <Button>Create Customer</Button>
-        </Link>
       </div>
       <Suspense fallback={<div>Loading...</div>}>
         <CustomersClientPage 

@@ -10,6 +10,8 @@ import { getCustomers } from '../_lib/api-client'
 import CustomerList from './customer-list'
 import { Input } from '@/components/ui/input'
 import PaginationControls from '@/components/ui/pagination-controls'
+import { Button } from '@/components/ui/button'
+import CustomerFormDialog from './customer-form-dialog'
 
 interface CustomersClientPageProps {
   initialCustomers: Customer[]
@@ -28,6 +30,7 @@ export default function CustomersClientPage({
   const [pagination, setPagination] = useState<PaginationMeta>(initialPagination)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '')
   const debouncedSearch = useDebounce(searchTerm, 500)
@@ -49,6 +52,12 @@ export default function CustomersClientPage({
 
   const handleDeleteSuccess = (customerId: string) => {
     setCustomers((prevCustomers) => prevCustomers.filter((c) => c.id !== customerId))
+  }
+
+  const handleFormSuccess = () => {
+    setIsFormOpen(false)
+    // Optionally, you can refresh the data here to show the new/updated customer
+    // For now, we rely on router.refresh() inside the form
   }
 
   // Effect to update URL when search term changes
@@ -97,7 +106,14 @@ export default function CustomersClientPage({
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-80"
         />
+        <Button onClick={() => setIsFormOpen(true)}>Create Customer</Button>
       </div>
+
+      <CustomerFormDialog
+        open={isFormOpen}
+        onOpenChange={setIsFormOpen}
+        onSuccess={handleFormSuccess}
+      />
 
       {isLoading ? (
         <div className="text-center">Loading customers...</div>
