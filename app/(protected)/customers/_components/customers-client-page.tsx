@@ -36,8 +36,8 @@ export default function CustomersClientPage({
   const debouncedSearch = useDebounce(searchTerm, 500)
 
   const createQueryString = useCallback(
-    (currentSearchParams: URLSearchParams, params: Record<string, string | number | null>) => {
-      const newSearchParams = new URLSearchParams(currentSearchParams.toString())
+    (params: Record<string, string | number | null>) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString())
       for (const [key, value] of Object.entries(params)) {
         if (value === null) {
           newSearchParams.delete(key)
@@ -47,7 +47,7 @@ export default function CustomersClientPage({
       }
       return newSearchParams.toString()
     },
-    []
+    [searchParams]
   )
 
   const handleDeleteSuccess = (customerId: string) => {
@@ -62,13 +62,13 @@ export default function CustomersClientPage({
 
   // Effect to update URL when search term changes
   useEffect(() => {
-    const newQuery = createQueryString(searchParams, {
-      search: debouncedSearch,
-      page: 1, // Reset to page 1 for new search
-    });
-    // Only push if the query string changes to avoid loops
-    if (newQuery !== searchParams.toString()) {
-      router.push(`${pathname}?${newQuery}`, { scroll: false });
+    const currentSearch = searchParams.get('search') || '';
+    if (debouncedSearch !== currentSearch) {
+        const newQuery = createQueryString({
+          search: debouncedSearch,
+          page: 1, // Reset to page 1 for new search
+        });
+        router.push(`${pathname}?${newQuery}`, { scroll: false });
     }
   }, [debouncedSearch, pathname, router, searchParams, createQueryString]);
 

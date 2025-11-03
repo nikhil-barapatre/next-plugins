@@ -74,16 +74,20 @@ export default function ProductsClientPage(props: ProductsClientPageProps) {
   )
 
   useEffect(() => {
-    const newQuery = createQueryString({
-      search: debouncedSearch,
-      category: category,
-      status: status,
-      page: 1, // Reset to page 1 on filter change
-    })
-    if (newQuery !== searchParams.toString()) {
-      router.push(`${pathname}?${newQuery}`, { scroll: false })
+    const currentSearch = searchParams.get('search') || '';
+    const currentCategory = searchParams.get('category') || '';
+    const currentStatus = searchParams.get('status') || '';
+
+    if (debouncedSearch !== currentSearch || category !== currentCategory || status !== currentStatus) {
+        const newQuery = createQueryString({
+          search: debouncedSearch,
+          category: category,
+          status: status,
+          page: 1, // Reset to page 1 on filter change
+        });
+        router.push(`${pathname}?${newQuery}`, { scroll: false });
     }
-  }, [debouncedSearch, category, status, createQueryString, pathname, router, searchParams])
+  }, [debouncedSearch, category, status, createQueryString, pathname, router, searchParams]);
 
   useEffect(() => {
     const fetchProducts = async () => {
