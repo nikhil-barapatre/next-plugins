@@ -1,7 +1,6 @@
 import { getCustomers } from './_lib/server-api'
 import CustomersClientPage from './_components/customers-client-page'
 import { Suspense } from 'react'
-import CustomerOverviewCards from './_components/customer-overview-cards'
 
 interface CustomersPageProps {
   searchParams: {
@@ -21,12 +20,6 @@ export default async function CustomersPage({ searchParams }: CustomersPageProps
 
   return (
     <div className="p-4">
-        <Suspense fallback={<div>Loading stats...</div>}>
-            <CustomerOverviewCards />
-        </Suspense>
-      <div className="flex justify-between items-center mb-5">
-        <h1 className="text-2xl font-bold">Customers</h1>
-      </div>
       <Suspense fallback={<div>Loading...</div>}>
         <CustomersClientPage 
           initialCustomers={customers} 

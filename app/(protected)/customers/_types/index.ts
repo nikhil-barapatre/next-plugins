@@ -10,11 +10,19 @@ export interface PaginationMeta {
   totalPages: number
 }
 
+export interface CustomerStats {
+    totalCustomers: number;
+    newCustomersThisMonth: number;
+    activeCustomers: number;
+    inactiveCustomers: number;
+  }
+
 // API parameters
 export interface GetCustomersParams {
   page?: number
   pageSize?: number
   search?: string
+  status?: string
 }
 
 // Component props

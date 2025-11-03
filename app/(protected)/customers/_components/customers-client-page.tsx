@@ -1,17 +1,18 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, Suspense } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebounce } from '@/hooks/useDebounce'
 
-import type { Customer, PaginationMeta } from '../_types'
-import { getCustomers } from '../_lib/api-client'
+import type { Customer, PaginationMeta, CustomerStats } from '../_types'
+import { getCustomers, getCustomerStats } from '../_lib/api-client'
 
 import CustomerList from './customer-list'
 import { Input } from '@/components/ui/input'
 import PaginationControls from '@/components/ui/pagination-controls'
 import { Button } from '@/components/ui/button'
 import CustomerFormDialog from './customer-form-dialog'
+import CustomerOverviewCards from './customer-overview-cards'
 import {
   Select,
   SelectContent,
@@ -44,6 +45,7 @@ export default function CustomersClientPage({
 
   const [customers, setCustomers] = useState<Customer[]>(initialCustomers)
   const [pagination, setPagination] = useState<PaginationMeta>(initialPagination)
+  const [stats, setStats] = useState<CustomerStats | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -77,6 +79,15 @@ export default function CustomersClientPage({
     []
   )
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const data = await getCustomerStats();
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }, []);
+
   const fetchCustomers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -98,11 +109,13 @@ export default function CustomersClientPage({
   const handleDeleteSuccess = (customerId: string) => {
     setCustomers((prevCustomers) => prevCustomers.filter((c) => c.id !== customerId))
     fetchCustomers(); // Refetch to update pagination meta
+    fetchStats();
   }
 
   const handleFormSuccess = () => {
     setIsFormOpen(false)
     fetchCustomers(); // Refetch data to show the new/updated customer
+    fetchStats();
   }
 
   const handleReset = () => {
@@ -128,13 +141,17 @@ export default function CustomersClientPage({
   // Effect to fetch data when searchParams change
   useEffect(() => {
     fetchCustomers();
-  }, [searchParams, fetchCustomers]);
+    fetchStats();
+  }, [searchParams, fetchCustomers, fetchStats]);
 
   return (
     <div>
-      <div className="flex justify-end mb-4">
+      <div className="flex justify-between items-center mb-5">
+        <h1 className="text-2xl font-bold">Customers</h1>
         <Button onClick={() => setIsFormOpen(true)}>Create Customer</Button>
       </div>
+
+      <CustomerOverviewCards stats={stats} />
 
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center gap-2">
