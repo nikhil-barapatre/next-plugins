@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db';
 import type { Prisma } from '@prisma/client';
-import type { GetProductsParams, Product } from '../_types'
+import type { GetProductsParams, Product } from '@/app/(protected)/products/_types'
 
 // Server-side API functions (for Route Handlers, Server Components, etc.)
 export async function getProducts(params: GetProductsParams = {}): Promise<{

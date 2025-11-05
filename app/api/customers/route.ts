@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { customerApiSchema } from "../../(protected)/customers/_validations/customer";
-import { getCustomers } from "../../(protected)/customers/_lib/server-api";
+import { getCustomers } from "@/lib/server/customers";
 import { ZodError } from "zod";
 
 export async function GET(req: NextRequest) {

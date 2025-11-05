@@ -1,6 +1,6 @@
 // app/api/customers/stats/route.ts
 import { NextResponse } from 'next/server';
-import { getCustomerStats } from '../../../(protected)/customers/_lib/server-api';
+import { getCustomerStats } from '@/lib/server/customers';
 
 export async function GET() {
   try {

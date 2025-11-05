@@ -1,4 +1,4 @@
-import { getCustomers } from './_lib/server-api'
+import { getCustomers } from '@/lib/server/customers'
 import CustomersClientPage from './_components/customers-client-page'
 import { Suspense } from 'react'
 

@@ -7,7 +7,7 @@ import type { ZodIssue } from 'zod'
 import { prisma } from '@/lib/db'
 import { productSchema } from '../../(protected)/products/_validations/product'
 import { successResponse, ErrorResponses } from '../../(protected)/products/_lib/api-response'
-import { getProducts } from '../../(protected)/products/_lib/server-api'
+import { getProducts } from '@/lib/server/products'
 import { Decimal } from '@prisma/client/runtime/library'
 
 // GET /api/products

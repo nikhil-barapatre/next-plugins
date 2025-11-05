@@ -1,4 +1,4 @@
-import { getProductById } from '../../_lib/server-api'
+import { getProductById } from '@/lib/server/products'
 import ProductForm from '../../_components/product-form'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'

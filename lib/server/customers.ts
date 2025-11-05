@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db';
 import type { Prisma, CustomerStatus } from '@prisma/client';
-import type { GetCustomersParams } from '../_types'
+import type { GetCustomersParams } from '@/app/(protected)/customers/_types'
 
 // Server-side API functions (for Route Handlers, Server Components, etc.)
 export async function getCustomers(params: GetCustomersParams = {}) {

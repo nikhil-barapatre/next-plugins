@@ -1,4 +1,4 @@
-import { getProducts, getDistinctCategories, getDistinctStatuses } from './_lib/server-api'
+import { getProducts, getDistinctCategories, getDistinctStatuses } from '@/lib/server/products'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import ProductOverviewCards from './_components/product-overview-cards'
