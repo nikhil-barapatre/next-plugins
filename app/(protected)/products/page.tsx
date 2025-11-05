@@ -11,11 +11,15 @@ interface ProductsPageProps {
 }
 
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const page = searchParams.page ? parseInt(searchParams.page, 10) : 1;
-  const pageSize = searchParams.pageSize ? parseInt(searchParams.pageSize, 10) : 10;
-  const search = searchParams.search || '';
-  const categories = searchParams.categories ? searchParams.categories.split(',') : undefined;
-  const statuses = searchParams.statuses ? searchParams.statuses.split(',') as Array<'DRAFT' | 'ACTIVE' | 'ARCHIVED'> : undefined;
+  const params = await searchParams; // ✅ unwrap the Promise
+
+  const page = params.page ? parseInt(params.page, 10) : 1;
+  const pageSize = params.pageSize ? parseInt(params.pageSize, 10) : 10;
+  const search = params.search || '';
+  const categories = params.categories ? params.categories.split(',') : undefined;
+  const statuses = params.statuses
+    ? params.statuses.split(',') as Array<'DRAFT' | 'ACTIVE' | 'ARCHIVED'>
+    : undefined;
 
   const { products, pagination } = await getProducts({ page, pageSize, search, categories, statuses });
   const distinctCategories = await getDistinctCategories()

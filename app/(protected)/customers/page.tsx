@@ -3,19 +3,21 @@ import CustomersClientPage from './_components/customers-client-page'
 import { Suspense } from 'react'
 
 interface CustomersPageProps {
-  searchParams: {
-    page?: string
-    search?: string
-    status?: string
-  }
+  searchParams: Promise<{
+    page?: string;
+    search?: string;
+    status?: string;
+  }>;
 }
 
 export default async function CustomersPage({ searchParams }: CustomersPageProps) {
-  const page = Number(searchParams.page) || 1;
-  const search = searchParams.search || '';
-  const status = searchParams.status || '';
+  const params = await searchParams; // ✅ Must unwrap
 
-  const { customers, pagination } = await getCustomers({ page, search, status })
+  const page = Number(params.page) || 1;
+  const search = params.search || '';
+  const status = params.status || '';
+
+  const { customers, pagination } = await getCustomers({ page, search, status });
   const distinctStatuses = ['ACTIVE', 'INACTIVE'];
 
   return (
