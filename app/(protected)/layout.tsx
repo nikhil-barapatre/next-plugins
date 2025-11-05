@@ -24,7 +24,7 @@ export default function ProtectedLayout({
 
   const navItems = [
     { name: "Customers", href: "/customers", icon: Users },
-    { name: "Products", href: "/products", icon: Package },
+    { name: "Products", href: "/products", icon: Package }
   ];
 
   // Close mobile sidebar on resize above breakpoint
