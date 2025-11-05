@@ -1,3 +1,5 @@
+'use server'
+
 import { prisma } from '@/lib/db';
 import type { Prisma, CustomerStatus } from '@prisma/client';
 import type { GetCustomersParams } from '@/app/(protected)/customers/_types'
