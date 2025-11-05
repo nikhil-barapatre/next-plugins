@@ -1,6 +1,8 @@
 import { CustomerApiData, CustomerFormData } from '../_validations/customer';
 import type { Customer, PaginationMeta } from '../_types';
 
+const CUSTOMERS_API_PATH = '/api/customers';
+
 export class ValidationError extends Error {
   constructor(public issues: { path: (string | number)[]; message: string }[]) {
     super("Validation failed");
@@ -20,7 +22,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function createCustomer(data: CustomerApiData): Promise<Customer> {
-  const response = await fetch('/api/customers', {
+  const response = await fetch(CUSTOMERS_API_PATH, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -29,7 +31,7 @@ export async function createCustomer(data: CustomerApiData): Promise<Customer> {
 }
 
 export async function updateCustomer(id: string, data: CustomerApiData): Promise<Customer> {
-  const response = await fetch(`/api/customers?id=${id}` , {
+  const response = await fetch(`${CUSTOMERS_API_PATH}?id=${id}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -39,7 +41,7 @@ export async function updateCustomer(id: string, data: CustomerApiData): Promise
 
 // You might also need a function to get a single customer
 export async function getCustomer(id: string): Promise<Customer> {
-  const response = await fetch(`/api/customers?id=${id}`);
+  const response = await fetch(`${CUSTOMERS_API_PATH}?id=${id}`);
   return handleResponse<Customer>(response);
 }
 
@@ -51,7 +53,7 @@ export async function getCustomers(params: { page?: number; pageSize?: number; s
     if (params.search) queryParams.set('search', params.search);
     if (params.status) queryParams.set('status', params.status);
   
-    const response = await fetch(`/api/customers?${queryParams.toString()}`);
+    const response = await fetch(`${CUSTOMERS_API_PATH}?${queryParams.toString()}`);
     const data = await response.json();
   
     if (!response.ok) {
@@ -63,7 +65,7 @@ export async function getCustomers(params: { page?: number; pageSize?: number; s
   
 
 export async function deleteCustomer(id: string): Promise<void> {
-    const response = await fetch(`/api/customers?id=${id}`, {
+    const response = await fetch(`${CUSTOMERS_API_PATH}?id=${id}`, {
       method: 'DELETE',
     });
   
@@ -75,7 +77,7 @@ export async function deleteCustomer(id: string): Promise<void> {
   }
 
   export async function getCustomerStats() {
-    const response = await fetch('/api/customers/stats');
+    const response = await fetch(`${CUSTOMERS_API_PATH}/stats`);
     const result = await response.json();
     if (!result.success) {
       throw new Error(result.error || 'Failed to fetch customer stats');

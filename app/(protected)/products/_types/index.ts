@@ -1,6 +1,5 @@
 import { Product as PrismaProduct } from '@prisma/client'
 
-// Client-safe product type (Decimal -> string conversion)
 export type Product = Omit<PrismaProduct, 'price' | 'discounted_price' | 'status'> & {
   price: string
   discounted_price: string | null
@@ -48,9 +47,6 @@ export interface ProductSearchParams {
   dateTo?: string;
 }
 
-// Form data types
-
-// Component props
 export interface ProductListProps {
   data: Product[]
   pagination: PaginationMeta

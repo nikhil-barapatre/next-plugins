@@ -8,7 +8,6 @@ export default async function EditProductPage({ params }: { params: Promise<{ id
   const resolvedParams = await params;
   const id = resolvedParams.id;
 
-  console.log('id', id)
   const product = await getProductById(id)
 
   if (!product) {

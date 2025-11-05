@@ -2,6 +2,8 @@
 import type { ApiResponse, GetProductsParams, PaginationMeta, Product } from '../_types/index'
 import type { ProductFormData } from '../_validations/product'
 
+const PRODUCTS_API_PATH = '/api/products';
+
 // Client-side API functions for components
 export async function getProducts(params: GetProductsParams = {}): Promise<{
   products: Product[]
@@ -19,7 +21,7 @@ export async function getProducts(params: GetProductsParams = {}): Promise<{
     }
   })
 
-  const response = await fetch(`/api/products?${queryParams}`)
+  const response = await fetch(`${PRODUCTS_API_PATH}?${queryParams}`)
   const result: ApiResponse<Product[]> = await response.json()
 
   if (!result.success) {
@@ -33,7 +35,7 @@ export async function getProducts(params: GetProductsParams = {}): Promise<{
 }
 
 export async function getProductById(productId: string): Promise<Product> {
-  const response = await fetch(`/api/products?id=${productId}`)
+  const response = await fetch(`${PRODUCTS_API_PATH}?id=${productId}`)
   const result: ApiResponse<Product> = await response.json()
 
   if (!result.success) {
@@ -44,7 +46,7 @@ export async function getProductById(productId: string): Promise<Product> {
 }
 
 export async function createProduct(data: ProductFormData): Promise<Product> {
-  const response = await fetch('/api/products', {
+  const response = await fetch(PRODUCTS_API_PATH, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -60,7 +62,7 @@ export async function createProduct(data: ProductFormData): Promise<Product> {
 }
 
 export async function updateProduct(productId: string, data: ProductFormData): Promise<Product> {
-  const response = await fetch(`/api/products?id=${productId}`, {
+  const response = await fetch(`${PRODUCTS_API_PATH}?id=${productId}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -76,7 +78,7 @@ export async function updateProduct(productId: string, data: ProductFormData): P
 }
 
 export async function deleteProduct(productId: string): Promise<void> {
-  const response = await fetch(`/api/products?id=${productId}`, {
+  const response = await fetch(`${PRODUCTS_API_PATH}?id=${productId}`, {
     method: 'DELETE',
   })
 
