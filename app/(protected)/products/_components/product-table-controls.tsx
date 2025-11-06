@@ -10,17 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
-
-interface ProductTableControlsProps {
-  distinctCategories: string[]
-  distinctStatuses: string[]
-  search: string
-  category: string
-  status: string
-  setSearch: (value: string) => void
-  setCategory: (value: string) => void
-  setStatus: (value: string) => void
-}
+import { ProductTableControlsProps } from '../_types'
 
 export default function ProductTableControls({
   distinctCategories,

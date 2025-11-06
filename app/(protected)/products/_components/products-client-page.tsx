@@ -6,16 +6,9 @@ import { useDebounce } from '@/hooks/useDebounce'
 
 import ProductList from './product-list'
 import ProductTableControls from './product-table-controls'
-import { Product, PaginationMeta as Pagination } from '../_types'
+import { Product, PaginationMeta as Pagination, ProductsClientPageProps } from '../_types'
 import { getProducts } from '../_lib/api-client'
 import PaginationControls from '@/components/ui/pagination-controls'
-
-interface ProductsClientPageProps {
-  products: Product[]
-  pagination: Pagination
-  distinctCategories: string[]
-  distinctStatuses: string[]
-}
 
 const getInitialState = (key: string, defaultValue: string) => {
   if (typeof window !== 'undefined') {
@@ -146,7 +139,7 @@ export default function ProductsClientPage(props: ProductsClientPageProps) {
       ) : error ? (
         <div className="text-center text-red-500">Error: {error}</div>
       ) : (
-        <ProductList data={products} onDeleteSuccess={handleDeleteSuccess} />
+        <ProductList data={products} onDeleteSuccess={handleDeleteSuccess} pagination={pagination} />
       )}
       <PaginationControls pagination={pagination} isLoading={isLoading} />
     </div>

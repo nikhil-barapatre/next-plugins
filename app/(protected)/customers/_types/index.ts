@@ -29,4 +29,31 @@ export interface GetCustomersParams {
 export interface CustomerListProps {
   data: Customer[]
   pagination: PaginationMeta
+  onDeleteSuccess: (customerId: string) => void
+}
+
+export interface CustomersPageProps {
+  searchParams: Promise<{
+    page?: string;
+    search?: string;
+    status?: string;
+  }>;
+}
+
+export interface CustomerFormDialogProps {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  customer?: Customer
+  onSuccess: () => void
+}
+
+export interface CustomerFormProps {
+  customer?: Customer
+  onSuccess: () => void
+}
+
+export interface CustomersClientPageProps {
+  initialCustomers: Customer[]
+  initialPagination: PaginationMeta
+  distinctStatuses: string[]
 }

@@ -14,14 +14,9 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { deleteProduct } from '../_lib/api-client'
-import { Product } from '../_types'
+import { ProductListProps } from '../_types'
 import Link from 'next/link'
 import { toast } from 'sonner'
-
-interface ProductListProps {
-  data: Product[]
-  onDeleteSuccess: (productId: string) => void
-}
 
 export default function ProductList({ data, onDeleteSuccess }: ProductListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)

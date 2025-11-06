@@ -19,12 +19,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Switch } from '@/components/ui/switch'
 import { customerSchema, CustomerFormData, CustomerApiData } from '../_validations/customer'
 import { createCustomer, updateCustomer, ValidationError } from '../_lib/api-client'
-import { Customer } from '../_types'
-
-interface CustomerFormProps {
-  customer?: Customer
-  onSuccess: () => void
-}
+import { CustomerFormProps } from '../_types'
 
 export default function CustomerForm({ customer, onSuccess }: CustomerFormProps) {
   const router = useRouter()

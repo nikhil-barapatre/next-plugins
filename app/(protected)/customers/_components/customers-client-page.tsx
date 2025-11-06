@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useDebounce } from '@/hooks/useDebounce'
 
-import type { Customer, PaginationMeta, CustomerStats } from '../_types'
+import type { Customer, PaginationMeta, CustomerStats, CustomersClientPageProps } from '../_types'
 import { getCustomers, getCustomerStats } from '../_lib/api-client'
 
 import CustomerList from './customer-list'
@@ -20,12 +20,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-
-interface CustomersClientPageProps {
-  initialCustomers: Customer[]
-  initialPagination: PaginationMeta
-  distinctStatuses: string[]
-}
 
 const getInitialState = (key: string, defaultValue: string) => {
   if (typeof window !== 'undefined') {
@@ -228,7 +222,7 @@ export default function CustomersClientPage({
       ) : error ? (
         <div className="text-center">Error: {error}</div>
       ) : (
-        <CustomerList data={customers} onDeleteSuccess={handleDeleteSuccess} />
+        <CustomerList data={customers} pagination={pagination} onDeleteSuccess={handleDeleteSuccess} />
       )}
 
       <PaginationControls

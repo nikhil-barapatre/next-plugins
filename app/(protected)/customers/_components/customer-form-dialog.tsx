@@ -9,14 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import CustomerForm from './customer-form'
-import { Customer } from '../_types'
-
-interface CustomerFormDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  customer?: Customer
-  onSuccess: () => void
-}
+import { CustomerFormDialogProps } from '../_types'
 
 export default function CustomerFormDialog({
   open,

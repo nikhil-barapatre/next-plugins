@@ -27,11 +27,8 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { productSchema, ProductFormData } from '../_validations/product'
-import { createProduct, updateProduct, Product } from '../_lib/api-client'
-
-interface ProductFormProps {
-  product?: Product
-}
+import { createProduct, updateProduct } from '../_lib/api-client'
+import { ProductFormProps } from '../_types'
 
 export default function ProductForm({ product }: ProductFormProps) {
   const router = useRouter()

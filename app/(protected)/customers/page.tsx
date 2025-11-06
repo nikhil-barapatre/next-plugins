@@ -1,14 +1,7 @@
 import { getCustomers } from '@/lib/server/customers'
 import CustomersClientPage from './_components/customers-client-page'
 import { Suspense } from 'react'
-
-interface CustomersPageProps {
-  searchParams: Promise<{
-    page?: string;
-    search?: string;
-    status?: string;
-  }>;
-}
+import { CustomersPageProps } from './_types'
 
 export default async function CustomersPage({ searchParams }: CustomersPageProps) {
   const params = await searchParams; // ✅ Must unwrap

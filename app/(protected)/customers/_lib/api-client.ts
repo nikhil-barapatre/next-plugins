@@ -1,5 +1,5 @@
 import { CustomerApiData, CustomerFormData } from '../_validations/customer';
-import type { Customer, PaginationMeta } from '../_types';
+import type { Customer, PaginationMeta } from '../_types/index';
 
 const CUSTOMERS_API_PATH = '/api/customers';
 

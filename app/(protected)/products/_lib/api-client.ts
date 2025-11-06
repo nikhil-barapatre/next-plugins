@@ -1,7 +1,6 @@
 // app/(protected)/products/_lib/api-client.ts
 import type { ApiResponse, GetProductsParams, PaginationMeta, Product } from '../_types/index'
 import type { ProductFormData } from '../_validations/product'
-
 const PRODUCTS_API_PATH = '/api/products';
 
 // Client-side API functions for components
@@ -38,11 +37,11 @@ export async function getProductById(productId: string): Promise<Product> {
   const response = await fetch(`${PRODUCTS_API_PATH}?id=${productId}`)
   const result: ApiResponse<Product> = await response.json()
 
-  if (!result.success) {
+  if (!result.success || !result.data) {
     throw new Error(result.error || 'Failed to fetch product')
   }
 
-  return result.data as Product
+  return result.data
 }
 
 export async function createProduct(data: ProductFormData): Promise<Product> {
@@ -54,7 +53,7 @@ export async function createProduct(data: ProductFormData): Promise<Product> {
 
   const result: ApiResponse<Product> = await response.json()
 
-  if (!result.success) {
+  if (!result.success || !result.data) {
     throw new Error(result.error || 'Failed to create product')
   }
 
@@ -70,7 +69,7 @@ export async function updateProduct(productId: string, data: ProductFormData): P
 
   const result: ApiResponse<Product> = await response.json()
 
-  if (!result.success) {
+  if (!result.success || !result.data) {
     throw new Error(result.error || 'Failed to update product')
   }
 

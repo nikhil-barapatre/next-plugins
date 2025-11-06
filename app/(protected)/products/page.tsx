@@ -3,15 +3,11 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import ProductOverviewCards from './_components/product-overview-cards'
 import ProductsClientPage from './_components/products-client-page'
-import { ProductSearchParams } from './_types'
+import { ProductsPageProps } from './_types'
 import { Suspense } from 'react'
 
-interface ProductsPageProps {
-  searchParams: ProductSearchParams
-}
-
 export default async function ProductsPage({ searchParams }: ProductsPageProps) {
-  const params = await searchParams; // ✅ unwrap the Promise
+  const params = await searchParams;
 
   const page = params.page ? parseInt(params.page, 10) : 1;
   const pageSize = params.pageSize ? parseInt(params.pageSize, 10) : 10;

@@ -1,18 +1,6 @@
 import { NextResponse } from 'next/server'
 import { ZodIssue } from 'zod'
-
-export interface ApiResponse<T> {
-  success: boolean
-  data?: T
-  error?: string
-  errors?: ZodIssue[]
-  meta?: {
-    page: number
-    pageSize: number
-    total: number
-    totalPages: number
-  }
-}
+import type { ApiResponse } from '../_types'
 
 export function successResponse<T>(
   data: T,

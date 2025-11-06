@@ -6,12 +6,20 @@ export type Product = Omit<PrismaProduct, 'price' | 'discounted_price' | 'status
   status: 'DRAFT' | 'ACTIVE' | 'ARCHIVED' | null
 }
 
+import { ZodIssue } from 'zod'
+
 // API response types
 export interface ApiResponse<T> {
   success: boolean
-  data: T
+  data?: T
   error?: string
-  meta?: PaginationMeta
+  errors?: ZodIssue[]
+  meta?: {
+    page: number
+    pageSize: number
+    total: number
+    totalPages: number
+  }
 }
 
 // Pagination types
@@ -50,6 +58,7 @@ export interface ProductSearchParams {
 export interface ProductListProps {
   data: Product[]
   pagination: PaginationMeta
+  onDeleteSuccess: (productId: string) => void
 }
 
 export interface PaginationData {
@@ -64,3 +73,33 @@ export interface ProductFilters {
   categories: string[]
   statuses: Array<{ value: string; label: string }>}
 
+export  interface ProductsPageProps {
+    searchParams: ProductSearchParams
+  }
+
+export interface ProductFormProps {
+  product?: Product
+}
+
+export interface ProductOverviewCardsProps {
+  products: Product[]
+  pagination: PaginationMeta
+}
+
+export interface ProductTableControlsProps {
+  distinctCategories: string[]
+  distinctStatuses: string[]
+  search: string
+  category: string
+  status: string
+  setSearch: (value: string) => void
+  setCategory: (value: string) => void
+  setStatus: (value: string) => void
+}
+
+export interface ProductsClientPageProps {
+  products: Product[]
+  pagination: PaginationMeta
+  distinctCategories: string[]
+  distinctStatuses: string[]
+}

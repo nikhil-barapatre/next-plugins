@@ -1,10 +1,6 @@
 
-import { Product, PaginationMeta } from '../_types'
+import { ProductOverviewCardsProps } from '../_types'
 
-interface ProductOverviewCardsProps {
-  products: Product[]
-  pagination: PaginationMeta
-}
 
 export default function ProductOverviewCards({
   products,

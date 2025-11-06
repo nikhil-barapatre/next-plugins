@@ -13,14 +13,9 @@ import {
 import { Badge } from '@/components/ui/badge'
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog'
 import { deleteCustomer } from '../_lib/api-client'
-import { Customer } from '../_types'
+import { Customer, CustomerListProps } from '../_types'
 import { toast } from 'sonner'
 import CustomerFormDialog from './customer-form-dialog'
-
-interface CustomerListProps {
-  data: Customer[]
-  onDeleteSuccess: (customerId: string) => void
-}
 
 export default function CustomerList({ data, onDeleteSuccess }: CustomerListProps) {
   const [dialogOpen, setDialogOpen] = useState(false)
